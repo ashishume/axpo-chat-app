@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import io from "socket.io-client";
+import LoginPage from "./pages/auth";
 
 const ChatComponent = () => {
   const socket = useRef(null as any);
@@ -34,11 +35,14 @@ const ChatComponent = () => {
     socket.current.emit("message", messageObj);
   };
   return (
-    <div>
-      <button type="button" onClick={handleClick}>
-        Emit a time message
-      </button>
-    </div>
+    <>
+      <LoginPage />
+      <div>
+        <button type="button" onClick={handleClick}>
+          Emit a time message
+        </button>
+      </div>
+    </>
   );
 };
 
