@@ -3,31 +3,50 @@ const http = require("http");
 const routes = require("./routes");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
+const cors = require("cors");
+// const socketIo = require("socket.io");
+const socketUtils = require("./src/socket");
 require("dotenv").config();
-
 // Create an Express application
 const app = express();
 
+app.use(
+  "*",
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
-
-// Create a HTTP server using Express app
-const server = http.createServer(app);
-
 // Database configuration
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
-
 // Middleware to add database instance to request object
 app.use((req, res, next) => {
   req.db = pool;
   next();
 });
+
+// Create a HTTP server using Express app
+const server = http.createServer(app);
+const io = socketUtils.io(server);
+socketUtils.connection(io);
+const socketIOMiddleware = (req, res, next) => {
+  req.io = io;
+  next();
+};
+
+app.get("/", socketIOMiddleware, (req, res) => {
+  req.io.emit("message", `Hello, ${req.originalUrl}`);
+  res.send("Welcome to chat app");
+});
+app.use(routes);
 
 pool
   .connect()
@@ -40,8 +59,3 @@ pool
       console.log(`Server is listening on port ${PORT}`);
     });
   });
-
-app.get("/", (req, res) => {
-  res.send("Welcome to chat app");
-});
-app.use(routes);
