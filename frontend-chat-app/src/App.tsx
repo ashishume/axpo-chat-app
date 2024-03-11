@@ -9,12 +9,13 @@ const ChatComponent = () => {
     socket.current = io("http://localhost:9000"); // Replace with your server URL
 
     // Event listeners
-    socket.current.on("connect", () => {
-      console.log("Connected to server");
+    socket.current.on("connect", (e: any) => {
+      console.log(e, "Connected to server");
+      socket.current.emit("login", "user123");
     });
 
-    socket.current.on("disconnect", () => {
-      console.log("Disconnected from server");
+    socket.current.on("disconnect", (e: any) => {
+      console.log(e, "Disconnected from server");
     });
     socket.current.on("message", (msg: any) => {
       console.log(msg);
@@ -25,7 +26,12 @@ const ChatComponent = () => {
     };
   }, []);
   const handleClick = () => {
-    socket.current.emit("message", "hello message 22");
+    let messageObj = {
+      senderId: "user123",
+      targetId: "randomUser123",
+      message: "Hey there im here",
+    };
+    socket.current.emit("message", messageObj);
   };
   return (
     <div>

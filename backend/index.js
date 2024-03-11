@@ -4,8 +4,7 @@ const routes = require("./routes");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
-// const socketIo = require("socket.io");
-const socketUtils = require("./src/socket");
+const socketUtils = require("./src/utils/socket");
 require("dotenv").config();
 // Create an Express application
 const app = express();
@@ -35,15 +34,13 @@ app.use((req, res, next) => {
 
 // Create a HTTP server using Express app
 const server = http.createServer(app);
-const io = socketUtils.io(server);
-socketUtils.connection(io);
-const socketIOMiddleware = (req, res, next) => {
-  req.io = io;
-  next();
-};
 
-app.get("/", socketIOMiddleware, (req, res) => {
-  req.io.emit("message", `Hello, ${req.originalUrl}`);
+const io = socketUtils.io(server);
+
+socketUtils.connection(io);
+
+
+app.get("/", (req, res) => {
   res.send("Welcome to chat app");
 });
 app.use(routes);
