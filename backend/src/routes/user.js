@@ -14,6 +14,22 @@ router.get("/users", async (request, response) => {
   );
 });
 
+router.post("/login", async (request, response) => {
+  const { email, password } = request.body;
+  pool.query(
+    "SELECT id, email, name FROM users WHERE email = $1 AND password = $2",
+    [email, password],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response
+        .status(200)
+        .json({ message: "auth successful", user: results.rows });
+    }
+  );
+});
+
 router.get("/user/:id", async (request, response) => {
   const id = parseInt(request.params.id);
 
@@ -24,14 +40,13 @@ router.get("/user/:id", async (request, response) => {
       if (error) {
         throw error;
       }
-      response.status(200).json({ user: results.rows });
+      response.status(200).json(results.rows);
     }
   );
 });
 
-router.post("/user", async (request, response) => {
+router.post("/signup", async (request, response) => {
   const { name, email, password } = request.body;
-  // const tableExists = await checkIfTableExists();
 
   // Check if the table exists, if not, create it
   if (!(await tableExists("users"))) {
