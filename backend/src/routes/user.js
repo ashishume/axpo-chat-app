@@ -71,13 +71,30 @@ router.post("/signup", async (request, response) => {
 
   // Insert user into the database
   pool.query(
-    "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
-    [name, email, password],
+    "SELECT email FROM users WHERE email=$1",
+    [email],
     (error, results) => {
       if (error) {
         throw error;
       }
-      response.status(201).send(`User added with ID: ${results.rows[0].id}`);
+      if (!results.rowCount) {
+        pool.query(
+          "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
+          [name, email, password],
+          (error, results) => {
+            if (error) {
+              throw error;
+            }
+            response
+              .status(201)
+              .send(`User added with ID: ${results.rows[0].id}`);
+          }
+        );
+      } else {
+        response.status(403).send({
+          message: "User already registered",
+        });
+      }
     }
   );
 });

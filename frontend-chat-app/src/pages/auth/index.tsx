@@ -4,13 +4,14 @@ import InputField from "../components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
+import { IUser } from "../../shared/models";
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     name: "",
   });
-  const authFormData = [
+  const authFormData: IUser[] = [
     {
       id: 1,
       name: "name",
@@ -34,30 +35,40 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(null as any);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { value ,setStoredValue} = useLocalStorage("auth");
+  const { value, setStoredValue } = useLocalStorage("auth");
   useEffect(() => {
     const isLoginPath = pathname.split("/").includes("login");
     setIsLogin(isLoginPath);
     if (value) {
-      navigate("/home");
+      navigate("/users");
     }
-  }, []);
+  }, [isLogin, pathname]);
+
+  /** handle login/signup */
   function handleSubmit(e: any) {
     e.preventDefault();
+
     const url = `${import.meta.env.VITE_BASE_URL}/${
       isLogin ? "login" : "signup"
     }`;
+    const { email, password, name } = formData;
+    const payload = {
+      ...(!isLogin && { name }),
+      email,
+      password,
+    };
     axios
-      .post(url, formData)
+      .post(url, payload)
       .then((res) => {
         if (res.status === 200) {
           setStoredValue(res.data.user);
-          navigate("/home");
+          navigate("/users");
+        }
+        if (res.status === 201) {
+          navigate("/login");
         }
       })
       .catch((e) => {
-        console.log(e);
-        
         console.error("Authentication failed");
       });
   }

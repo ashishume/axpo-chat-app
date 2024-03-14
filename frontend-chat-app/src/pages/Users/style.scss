@@ -1,0 +1,10 @@
+.users-container {
+  border: solid 1px #0000004d;
+  margin: 12px;
+  padding: 6px;
+  border-radius: 10px;
+  &:hover {
+    background-color: #8c8c8c6e;
+    cursor: pointer;
+  }
+}

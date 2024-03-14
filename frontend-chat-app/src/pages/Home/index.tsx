@@ -2,22 +2,23 @@ import { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import io from "socket.io-client";
 import "./style.scss";
-import axios from "axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { fetchUsers } from "../../shared/Utils";
 const Home = () => {
   const { value, removeStoredValue } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
   const [users, setUsers] = useState([]);
   const socket = useRef(null as any);
+  const navigate = useNavigate();
+  const { id } = useParams();
   useEffect(() => {
     socketConnection();
 
-    const url = `${import.meta.env.VITE_BASE_URL}/users`;
-    axios.get(url).then((res) => {
-      if (res.status === 200) {
-        setUsers(res.data);
-      }
-    });
+    (async function () {
+      const res = await fetchUsers();
+      setUsers(res);
+    })();
 
     return () => {
       socket.current.disconnect();
@@ -26,6 +27,7 @@ const Home = () => {
 
   const logOut = () => {
     removeStoredValue("auth");
+    navigate("/login");
   };
 
   const socketConnection = () => {
@@ -49,9 +51,10 @@ const Home = () => {
   };
 
   const handleClick = () => {
+
     let messageObj = {
       senderId: value?.id,
-      targetId: (users.find((v: any) => v?.id !== value?.id) as any).id,
+      targetId: id,
       message,
     };
     socket.current.emit("message", messageObj);

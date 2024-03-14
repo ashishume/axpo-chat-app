@@ -3,6 +3,7 @@ import App from "../App";
 import LoginPage from "../pages/auth";
 import Home from "../pages/Home";
 import PrivateRoute from "./private-route";
+import Users from "../pages/Users";
 const Router = () => {
   const routes = createBrowserRouter([
     {
@@ -14,8 +15,12 @@ const Router = () => {
         //   element: <App />,
         // },
         {
-          path: "/home",
+          path: "/chat/:id",
           element: <Home />,
+        },
+        {
+          path: "/users",
+          element: <Users />,
         },
       ],
     },
