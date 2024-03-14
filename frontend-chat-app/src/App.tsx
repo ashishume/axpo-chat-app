@@ -39,7 +39,6 @@ const ChatComponent = () => {
       {/* <button type="button" onClick={handleClick}>
           Emit a time message
         </button> */}
-      <Router />
     </>
   );
 };

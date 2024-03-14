@@ -1,11 +1,23 @@
-import { RouterProvider, createBrowserRouter, useRouteError } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import LoginPage from "../pages/auth";
+import Home from "../pages/Home";
+import PrivateRoute from "./private-route";
 const Router = () => {
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <App />,
+      element: <PrivateRoute />,
+      children: [
+        // {
+        //   path: "/",
+        //   element: <App />,
+        // },
+        {
+          path: "/home",
+          element: <Home />,
+        },
+      ],
     },
     {
       path: "/login",
@@ -17,10 +29,6 @@ const Router = () => {
       element: <LoginPage />,
       errorElement: "",
     },
-    // {
-    //   path: "*",
-    //   element: <PageNotFound />,
-    // },
   ]);
 
   return <RouterProvider router={routes} />;

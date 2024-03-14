@@ -1,8 +1,9 @@
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import InputField from "../components/InputField";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -32,20 +33,33 @@ const LoginPage = () => {
 
   const [isLogin, setIsLogin] = useState(null as any);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { value ,setStoredValue} = useLocalStorage("auth");
   useEffect(() => {
     const isLoginPath = pathname.split("/").includes("login");
     setIsLogin(isLoginPath);
+    if (value) {
+      navigate("/home");
+    }
   }, []);
   function handleSubmit(e: any) {
     e.preventDefault();
     const url = `${import.meta.env.VITE_BASE_URL}/${
       isLogin ? "login" : "signup"
     }`;
-    console.log(url);
-
-    axios.post(url, formData).then((res) => {
-      console.log(res);
-    });
+    axios
+      .post(url, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          setStoredValue(res.data.user);
+          navigate("/home");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        
+        console.error("Authentication failed");
+      });
   }
 
   function handleChange(e: any) {
