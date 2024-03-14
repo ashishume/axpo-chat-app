@@ -2,24 +2,16 @@ import { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import io from "socket.io-client";
 import "./style.scss";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { fetchUsers } from "../../shared/Utils";
+import { useNavigate, useParams } from "react-router-dom";
 const Home = () => {
   const { value, removeStoredValue } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
-  const [users, setUsers] = useState([]);
   const socket = useRef(null as any);
   const navigate = useNavigate();
   const { id } = useParams();
   useEffect(() => {
     socketConnection();
-
-    (async function () {
-      const res = await fetchUsers();
-      setUsers(res);
-    })();
-
     return () => {
       socket.current.disconnect();
     };
@@ -51,7 +43,6 @@ const Home = () => {
   };
 
   const handleClick = () => {
-
     let messageObj = {
       senderId: value?.id,
       targetId: id,

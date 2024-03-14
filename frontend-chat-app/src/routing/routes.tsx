@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import App from "../App";
+// import App from "../App";
 import LoginPage from "../pages/auth";
-import Home from "../pages/Home";
+import Chat from "../pages/Chat";
 import PrivateRoute from "./private-route";
 import Users from "../pages/Users";
 const Router = () => {
@@ -16,7 +16,7 @@ const Router = () => {
         // },
         {
           path: "/chat/:id",
-          element: <Home />,
+          element: <Chat />,
         },
         {
           path: "/users",
