@@ -1,0 +1,12 @@
+.navbar-container {
+  display: flex;
+  /* background: red; */
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 0 12px;
+  box-shadow: -1px 1px 5px 0px lightgray;
+  .user-details {
+    font-weight: 600;
+  }
+}

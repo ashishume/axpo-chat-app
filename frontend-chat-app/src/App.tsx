@@ -1,14 +1,7 @@
-import { useEffect, useRef } from "react";
-import io from "socket.io-client";
+import Router from "./routing/routes";
 
-const ChatComponent = () => {
-  return (
-    <>
-      {/* <button type="button" onClick={handleClick}>
-          Emit a time message
-        </button> */}
-    </>
-  );
+const App = () => {
+  return <Router />;
 };
 
-export default ChatComponent;
+export default App;

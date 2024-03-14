@@ -48,7 +48,7 @@ const LoginPage = () => {
   function handleSubmit(e: any) {
     e.preventDefault();
 
-    const url = `${import.meta.env.VITE_BASE_URL}/${
+    const url = `${import.meta.env.VITE_BASE_API_URL}/${
       isLogin ? "login" : "signup"
     }`;
     const { email, password, name } = formData;

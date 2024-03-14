@@ -2,29 +2,30 @@ import { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import io from "socket.io-client";
 import "./style.scss";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar";
 const Home = () => {
-  const { value, removeStoredValue } = useLocalStorage("auth");
+  const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
   const socket = useRef(null as any);
-  const navigate = useNavigate();
   const { id } = useParams();
+  const ref = useRef(null as any);
+  const chatRef = useRef(null as any);
+
+  /** initial load */
   useEffect(() => {
     socketConnection();
+    ref.current.focus();
     return () => {
       socket.current.disconnect();
     };
   }, []);
 
-  const logOut = () => {
-    removeStoredValue("auth");
-    navigate("/login");
-  };
-
+  /** socket connection establised */
   const socketConnection = () => {
     // Establish a socket connection
-    socket.current = io("http://192.168.1.7:9000"); // Replace with your server URL
+    socket.current = io(import.meta.env.VITE_BASE_URL);
 
     // Event listeners
     socket.current.on("connect", (e: any) => {
@@ -35,43 +36,80 @@ const Home = () => {
     socket.current.on("disconnect", (e: any) => {
       console.log(e, "Disconnected from server");
     });
-    socket.current.on("message", (msg: any) => {
-      console.log(msg);
-
+    socket.current.on("message", async (msg: any) => {
       setChatMessages((prev: any) => [...prev, msg]);
     });
   };
 
+  /** scroll to the latest message */
+  useEffect(() => {
+    const lastMessage = chatRef.current.lastChild;
+    if (lastMessage) {
+      lastMessage.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
+
+  /** send message on send button */
   const handleClick = () => {
-    let messageObj = {
-      senderId: value?.id,
-      targetId: id,
-      message,
-    };
-    socket.current.emit("message", messageObj);
+    sentMessage();
+  };
+  /** send message on press enter */
+  const handleEnter = (e: any) => {
+    if (e.keyCode === 13) {
+      sentMessage();
+    }
+  };
+
+  const sentMessage = () => {
+    if (message?.length) {
+      let messageObj = {
+        senderId: value?.id,
+        targetId: id,
+        message,
+      };
+      socket.current.emit("message", messageObj);
+      setMessage("");
+    }
   };
 
   return (
     <div className="chat-container">
-      <button onClick={logOut}>Logout</button>
+      <Navbar />
       <div className="chat-content">
-        <div className="chat-messages">
-          {chatMessages.map(({ message }: any) => {
+        <div className="chat-messages" ref={chatRef}>
+          {chatMessages.map(({ message, senderId }: any) => {
             return (
-              <div key={Math.floor(Math.random() * 100000)}>{message}</div>
+              <div
+                key={Math.floor(Math.random() * 100000)}
+                className={`chat-bubble ${
+                  senderId === value?.id ? "sent-by-me" : ""
+                }`}
+              >
+                {message}
+              </div>
             );
           })}
         </div>
-        <input
-          type="text"
-          className="chat-input"
-          value={message}
-          placeholder="Enter your message..."
-          onChange={(e: any) => setMessage(e.target.value)}
-        />
-        <button onClick={handleClick} className="submit-btn">
-          Submit
-        </button>
+        <div className="chat-actions-container">
+          <div className="chat-actions">
+            <input
+              type="text"
+              className="chat-input"
+              ref={ref}
+              value={message}
+              placeholder="Enter your message..."
+              onChange={(e: any) => setMessage(e.target.value)}
+              onKeyDown={handleEnter}
+            />
+            <button
+              disabled={!message?.length}
+              onClick={handleClick}
+              className="submit-btn"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
