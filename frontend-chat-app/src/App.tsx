@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import io from "socket.io-client";
-import LoginPage from "./pages/auth";
+import Router from "./routing/routes";
 
 const ChatComponent = () => {
   const socket = useRef(null as any);
@@ -36,12 +36,10 @@ const ChatComponent = () => {
   };
   return (
     <>
-      <LoginPage />
-      <div>
-        <button type="button" onClick={handleClick}>
+      {/* <button type="button" onClick={handleClick}>
           Emit a time message
-        </button>
-      </div>
+        </button> */}
+      <Router />
     </>
   );
 };

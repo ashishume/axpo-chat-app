@@ -1,24 +1,29 @@
-import { createBrowserRouter, useRouteError } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, useRouteError } from "react-router-dom";
+import App from "../App";
+import LoginPage from "../pages/auth";
+const Router = () => {
+  const routes = createBrowserRouter([
+    {
+      path: "/",
+      element: <App />,
+    },
+    {
+      path: "/login",
+      element: <LoginPage />,
+      errorElement: "",
+    },
+    {
+      path: "/signup",
+      element: <LoginPage />,
+      errorElement: "",
+    },
+    // {
+    //   path: "*",
+    //   element: <PageNotFound />,
+    // },
+  ]);
 
+  return <RouterProvider router={routes} />;
+};
 
-export const routes = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <Home />,
-  // },
-  // {
-  //   path: "/app",
-  //   element: <AuthPage />,
-  //   errorElement: "",
-  //   children: [
-  //     {
-  //       path: "form",
-  //       element: <InputForm />,
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: "*",
-  //   element: <PageNotFound />,
-  // },
-]);
+export default Router;

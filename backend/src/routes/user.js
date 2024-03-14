@@ -2,6 +2,9 @@ const express = require("express");
 const { createUserTable, tableExists, pool } = require("../utils/sql-queries");
 const router = express.Router();
 
+/**
+ * APTH PATH: /api/v1/users
+ */
 router.get("/users", async (request, response) => {
   pool.query(
     "SELECT id,email,name FROM users ORDER BY id ASC",
@@ -14,7 +17,10 @@ router.get("/users", async (request, response) => {
   );
 });
 
-router.post("/login", async (request, response) => {
+/**
+ * APTH PATH: /api/v1/login
+ */
+router.post("/login", (request, response) => {
   const { email, password } = request.body;
   pool.query(
     "SELECT id, email, name FROM users WHERE email = $1 AND password = $2",
@@ -23,13 +29,20 @@ router.post("/login", async (request, response) => {
       if (error) {
         throw error;
       }
-      response
-        .status(200)
-        .json({ message: "auth successful", user: results.rows });
+      if (results?.rowCount) {
+        response
+          .status(200)
+          .json({ message: "auth successful", user: results.rows[0] });
+      } else {
+        response.status(401).json({ message: "auth failed" });
+      }
     }
   );
 });
 
+/**
+ * APTH PATH: /api/v1/user/<id>
+ */
 router.get("/user/:id", async (request, response) => {
   const id = parseInt(request.params.id);
 
@@ -45,6 +58,9 @@ router.get("/user/:id", async (request, response) => {
   );
 });
 
+/**
+ * APTH PATH: /api/v1/signup
+ */
 router.post("/signup", async (request, response) => {
   const { name, email, password } = request.body;
 
