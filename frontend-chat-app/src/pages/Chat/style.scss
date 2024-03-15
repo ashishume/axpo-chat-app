@@ -1,8 +1,7 @@
 .chat-container {
   .chat-content {
-    background: url(/public/background.jpg);
+    background: url("/public/background.jpg");
     background-attachment: fixed;
-    background-size: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;

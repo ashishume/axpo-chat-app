@@ -9,9 +9,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 30rem;
+      flex-direction: column;
+      height: 35rem;
       font-size: 38px;
       font-weight: 600;
+      .happy-icon{
+        height: 80px;
+        width: 80px;
+      }
     }
   }
 }

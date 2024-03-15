@@ -5,6 +5,7 @@ import Users from "../Users";
 import "./style.scss";
 import { fetchTargetUser, fetchUsers } from "../../shared/Utils";
 import { IUser } from "../../shared/models";
+import { SVGs } from "../../components/SvgIcons";
 const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
@@ -34,7 +35,12 @@ const Home = () => {
           {targetUser ? (
             <Chat targetUser={targetUser} />
           ) : (
-            <div className="empty-container">Start chat with your friends</div>
+            <div className="empty-container">
+              Start a interesting conversation with your friends'
+             <div className="happy-icon">
+              {SVGs().Happy}
+              </div>
+            </div>
           )}
         </div>
       </div>
