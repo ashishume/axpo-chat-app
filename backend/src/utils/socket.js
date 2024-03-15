@@ -12,48 +12,49 @@ let clientsData = {};
 exports.connection = (io) => {
   io.on("connection", (client) => {
     /** user logged in */
-    client.on("login", (senderId) => {
-      client.senderId = senderId;
-      if (clientsData[senderId]) {
-        clientsData[senderId].push(client);
+    client.on("login", (conversationId) => {
+      client.conversationId = conversationId;
+      if (clientsData[conversationId]) {
+        clientsData[conversationId].push(client);
       } else {
-        clientsData[senderId] = [client];
+        clientsData[conversationId] = [client];
       }
-      console.log(`connection established:${senderId}`);
+      console.log(`connection established:${conversationId}`);
     });
 
     /** message communication */
     client.on("message", (messageData) => {
-      const { senderId, targetId } = messageData;
-      if (targetId && clientsData[targetId]) {
-        clientsData[targetId].forEach((client) => {
-          client.emit("message", messageData);
-        });
+      const { senderId, targetId, message } = messageData;
+
+      // Check if both sender and target are valid and not the same
+      if (senderId && targetId && senderId !== targetId) {
+        const conversationId = [senderId, targetId].sort().join("-"); // Unique identifier for the conversation
+
+        // Send the message to all clients associated with the conversationId
+        if (clientsData[conversationId]) {
+          clientsData[conversationId].forEach((client) => {
+            client.emit("message", messageData);
+          });
+        }
+
+        console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
       }
-      if (senderId && clientsData[senderId]) {
-        clientsData[senderId].forEach((client) => {
-          client.emit("message", messageData);
-        });
-      }
-      console.log(
-        `message sent/received senderId:${senderId}, targetId:${targetId}`
-      );
     });
 
     /** connection disconnected */
     client.on("disconnect", () => {
-      if (!client.senderId || !clientsData[client.senderId]) {
+      if (!client.conversationId || !clientsData[client.conversationId]) {
         return;
       }
 
-      let targetClients = clientsData[client.senderId];
-      for (let i = 0; i < targetClients.length; ++i) {
-        if (targetClients[i] == client) {
-          targetClients.splice(i, 1);
+      let conversationClients = clientsData[client.conversationId];
+      for (let i = 0; i < conversationClients.length; ++i) {
+        if (conversationClients[i] == client) {
+          conversationClients.splice(i, 1);
         }
       }
 
-      console.log(`connection disconnected:${client.senderId}`);
+      console.log(`connection disconnected:${client.conversationId}`);
     });
   });
 };

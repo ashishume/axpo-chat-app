@@ -13,7 +13,7 @@ const Navbar = () => {
   return (
     <div className="navbar-container">
       <div className="user-details">
-        {value.name} ({value.email})
+        From:{value.name} ({value.email})
       </div>
       <div className="auth-action-container">
         <Button className="logout-btn" onClick={logOut}>
