@@ -2,16 +2,12 @@ import { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import io from "socket.io-client";
 import "./style.scss";
-import { useParams } from "react-router-dom";
-import Navbar from "../../components/Navbar/Navbar";
-import axios from "axios";
-const Home = () => {
+import { IUser } from "../../shared/models";
+const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
-  const [targetUser, setTargetUser] = useState(null as any);
   const socket = useRef(null as any);
-  const { id } = useParams();
   const ref = useRef(null as any);
   const chatRef = useRef(null as any);
 
@@ -19,24 +15,20 @@ const Home = () => {
   useEffect(() => {
     socketConnection();
     ref.current.focus();
-
-    const url = `${import.meta.env.VITE_BASE_API_URL}/user/${id}`;
-
-    axios
-      .get(url)
-      .then((res) => {
-        if (res.status === 200) {
-          setTargetUser(res.data);
-        }
-      })
-      .catch((e) => {
-        console.error("Users fetch failed");
-      });
+    setChatMessages([]);
 
     return () => {
       socket.current.disconnect();
     };
-  }, []);
+  }, [targetUser]);
+
+  /** scroll to the latest message */
+  useEffect(() => {
+    const lastMessage = chatRef.current.lastChild;
+    if (lastMessage) {
+      lastMessage.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
 
   /** socket connection establised */
   const socketConnection = () => {
@@ -47,7 +39,7 @@ const Home = () => {
     socket.current.on("connect", (e: any) => {
       console.log(e, "Connected to server");
       //create a unique id between user and target user to create room between them
-      const conversationId = [value?.id, id].sort().join("-");
+      const conversationId = [value?.id, targetUser?.id].sort().join("-");
       socket.current.emit("login", conversationId);
     });
 
@@ -58,14 +50,6 @@ const Home = () => {
       setChatMessages((prev: any) => [...prev, msg]);
     });
   };
-
-  /** scroll to the latest message */
-  useEffect(() => {
-    const lastMessage = chatRef.current.lastChild;
-    if (lastMessage) {
-      lastMessage.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chatMessages]);
 
   /** send message on send button */
   const handleClick = () => {
@@ -82,7 +66,7 @@ const Home = () => {
     if (message?.length) {
       let messageObj = {
         senderId: value?.id,
-        targetId: parseInt(id as string),
+        targetId: targetUser?.id,
         message,
       };
       socket.current.emit("message", messageObj);
@@ -92,11 +76,6 @@ const Home = () => {
 
   return (
     <div className="chat-container">
-      <Navbar />
-      <div>
-        To: {targetUser?.name}
-        {` (${targetUser?.email})`}
-      </div>
       <div className="chat-content">
         <div className="chat-messages" ref={chatRef}>
           {chatMessages.map(({ message, senderId }: any) => {
@@ -137,4 +116,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Chat;

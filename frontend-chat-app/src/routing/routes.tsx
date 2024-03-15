@@ -4,24 +4,25 @@ import LoginPage from "../pages/auth";
 import Chat from "../pages/Chat";
 import PrivateRoute from "./private-route";
 import Users from "../pages/Users";
+import Home from "../pages/Home";
 const Router = () => {
   const routes = createBrowserRouter([
     {
       path: "/",
       element: <PrivateRoute />,
       children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
         // {
-        //   path: "/",
-        //   element: <App />,
+        //   path: "/chat",
+        //   element: <Chat />,
         // },
-        {
-          path: "/chat/:id",
-          element: <Chat />,
-        },
-        {
-          path: "/users",
-          element: <Users />,
-        },
+        // {
+        //   path: "/users",
+        //   element: <Users />,
+        // },
       ],
     },
     {

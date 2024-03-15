@@ -1,0 +1,17 @@
+.home-container {
+  display: flex;
+  .users-left-panel {
+    flex: 1;
+  }
+  .chat-right-panel {
+    flex: 3;
+    .empty-container{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 30rem;
+      font-size: 38px;
+      font-weight: 600;
+    }
+  }
+}

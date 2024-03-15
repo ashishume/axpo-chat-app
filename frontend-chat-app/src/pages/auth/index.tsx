@@ -40,7 +40,7 @@ const LoginPage = () => {
     const isLoginPath = pathname.split("/").includes("login");
     setIsLogin(isLoginPath);
     if (value) {
-      navigate("/users");
+      navigate("/");
     }
   }, [isLogin, pathname]);
 
@@ -62,7 +62,7 @@ const LoginPage = () => {
       .then((res) => {
         if (res.status === 200) {
           setStoredValue(res.data.user);
-          navigate("/users");
+          navigate("/");
         }
         if (res.status === 201) {
           navigate("/login");

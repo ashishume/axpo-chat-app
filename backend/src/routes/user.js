@@ -51,7 +51,9 @@ router.get("/user/:id", async (request, response) => {
     [id],
     (error, results) => {
       if (error) {
-        throw error;
+        return response.status(401).json({
+          message: "user not found",
+        });
       }
       response.status(200).json(results.rows[0]);
     }
