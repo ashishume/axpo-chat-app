@@ -10,8 +10,6 @@ const SnackbarMessage = ({
 
   useEffect(() => {
     if (message?.length) {
-      console.log(message);
-
       setOpen(true);
     }
   }, []);

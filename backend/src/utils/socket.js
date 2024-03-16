@@ -1,4 +1,5 @@
 const socketIO = require("socket.io");
+const { createChatTable, tableExists, pool } = require("./sql-queries");
 
 exports.io = (server) => {
   return socketIO(server, {
@@ -23,7 +24,7 @@ exports.connection = (io) => {
     });
 
     /** message communication */
-    client.on("message", (messageData) => {
+    client.on("message", async (messageData) => {
       const { senderId, targetId, message } = messageData;
 
       // Check if both sender and target are valid and not the same
@@ -44,7 +45,9 @@ exports.connection = (io) => {
             });
           });
         }
-
+        if (conversationId) {
+          await updateDatabaseTable(messageData, conversationId);
+        }
         console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
       }
     });
@@ -70,4 +73,58 @@ exports.connection = (io) => {
 exports.socketIOMiddleware = (req, res, next) => {
   req.io = io;
   next();
+};
+
+/**
+ * store the chats to the database
+ * @param {*} messageData
+ * @param {*} conversationId
+ */
+const updateDatabaseTable = async (messageData, conversationId) => {
+  // Check if the table exists, if not, create it
+  if (!(await tableExists("chats"))) {
+    await createChatTable();
+  }
+
+  const { message, senderId, targetId } = messageData;
+
+  // pool.query(
+  //   "SELECT conversationId FROM chats WHERE conversationId=$1",
+  //   [conversationId],
+  //   (error, results) => {
+  //     if (error) {
+  //       throw error;
+  //     }
+  // if (!results.rowCount) {
+    pool.query(
+      'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
+      [message, senderId, targetId, conversationId],
+      (error, results) => {
+        if (error) {
+          throw error;
+        }
+      }
+    );
+  // }
+  // } else {
+  // const updateChatByConversationId = async () => {
+  //   try {
+  //     const query = `
+  //       UPDATE chats
+  //       SET message = $1,
+  //           senderId = $2,
+  //           targetId = $3
+  //       WHERE conversationId = $4
+  //     `;
+  //     const values = [message, senderId, targetId, conversationId];
+  //     await pool.query(query, values);
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // };
+
+  // updateChatByConversationId();
+  // }
+  // }
+  // );
 };

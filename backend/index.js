@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-const routes = require("./routes");
+const routes = require("./src/api-routes");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");

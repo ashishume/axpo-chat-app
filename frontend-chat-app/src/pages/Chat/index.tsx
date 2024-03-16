@@ -3,8 +3,8 @@ import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import io from "socket.io-client";
 import "./style.scss";
 import { IUser } from "../../shared/models";
-import { Snackbar } from "@mui/material";
 import SnackbarMessage from "../../components/Snackbar";
+import { fetchPreviousChats } from "../../shared/Utils";
 const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
@@ -14,8 +14,12 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const ref = useRef(null as any);
   const chatRef = useRef(null as any);
 
+  //create a unique id between user and target user to create room between them
+  const conversationId = [value?.id, targetUser?.id].sort().join("-");
+
   /** initial load */
   useEffect(() => {
+    fetchFormerChats();
     socketConnection();
     requestNotificationPermission();
     ref.current.focus();
@@ -39,19 +43,17 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     socket.current = io(import.meta.env.VITE_BASE_URL);
     try {
       // Event listeners
-      socket.current.on("connect", (e: any) => {
+      socket.current.on("connect", () => {
         console.log("Connected to server");
-        //create a unique id between user and target user to create room between them
-        const conversationId = [value?.id, targetUser?.id].sort().join("-");
         socket.current.emit("login", conversationId);
       });
 
       socket.current.on("notification", (payload: any) => {
-        console.log("notification received");
         // Create a new notification
         const notification = new Notification(payload.title, {
           body: payload.body,
         });
+        console.log(notification, "notification received");
       });
 
       socket.current.on("disconnect", (e: any) => {
@@ -75,7 +77,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       .then((result) => {
         console.log("notication permission", result);
       })
-      .catch((e: any) => {
+      .catch(() => {
         setErrorMessages("permission denied");
       });
   };
@@ -92,6 +94,20 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     }
   };
 
+  /**
+   * fetching past chat conversations
+   * @param conversationId
+   */
+  const fetchFormerChats = () => {
+    (async function () {
+      try {
+        const res = await fetchPreviousChats(conversationId);
+        setChatMessages(res);
+      } catch (e) {
+        setErrorMessages("fetching failed");
+      }
+    })();
+  };
   /** send message to the target user */
   const sentMessage = () => {
     if (message?.length) {

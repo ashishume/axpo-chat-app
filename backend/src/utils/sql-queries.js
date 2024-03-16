@@ -41,9 +41,26 @@ const createUserTable = async () => {
     throw e;
   }
 };
+const createChatTable = async () => {
+  try {
+    const query = `
+    CREATE TABLE chats (
+      id SERIAL PRIMARY KEY,
+      message TEXT NOT NULL,
+      "targetId" INTEGER NOT NULL,
+      "senderId" INTEGER NOT NULL,
+      "conversationId" VARCHAR(255) NOT NULL
+      );
+      `;
+    await pool.query(query);
+  } catch (e) {
+    throw e;
+  }
+};
 
 module.exports = {
   createUserTable,
   tableExists,
   pool,
+  createChatTable,
 };
