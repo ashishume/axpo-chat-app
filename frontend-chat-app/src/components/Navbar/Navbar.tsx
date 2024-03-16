@@ -12,8 +12,11 @@ const Navbar = () => {
   };
   return (
     <div className="navbar-container">
+      <div className="logo-container">
+        <img src="/logo.png" className="logo" />
+      </div>
       <div className="user-details">
-        From:{value.name} ({value.email})
+        {value.name} (Me)
       </div>
       <div className="auth-action-container">
         <Button className="logout-btn" onClick={logOut}>

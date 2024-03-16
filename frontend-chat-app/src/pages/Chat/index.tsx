@@ -99,10 +99,10 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       (payload: { title: string; body: string }) => {
         //TODO find a way to show notifications when tab is out of focus
         // Create a new notification
-        // const notification = new Notification(payload.title, {
-        //   body: payload.body,
-        // });
-        // console.log(notification, "notification received");
+        const notification = new Notification(payload.title, {
+          body: payload.body,
+        });
+        console.log(notification, "notification received");
       }
     );
   };

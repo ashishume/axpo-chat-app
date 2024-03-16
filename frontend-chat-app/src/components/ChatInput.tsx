@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import SendIcon from "@mui/icons-material/Send";
 
 const ChatInput = ({
   message,
@@ -31,7 +32,12 @@ const ChatInput = ({
         onClick={() => handleClick()}
         className="submit-btn"
       >
-        Submit
+        Send{" "}
+        <SendIcon
+          style={{
+            verticalAlign: "-7px",
+          }}
+        />
       </button>
     </Fragment>
   );
