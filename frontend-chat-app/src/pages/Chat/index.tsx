@@ -5,14 +5,16 @@ import "./style.scss";
 import { IUser } from "../../shared/models";
 import SnackbarMessage from "../../components/Snackbar";
 import { fetchPreviousChats } from "../../shared/Utils";
+import ChatMessages from "../../components/ChatMessages";
+import ChatInput from "../../components/ChatInput";
 const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
   const [error, setErrorMessages] = useState("");
   const socket = useRef(null as any);
-  const ref = useRef(null as any);
-  const chatRef = useRef(null as any);
+  const inputRef = useRef(null as any);
+  const lastChildRef = useRef(null as any);
 
   //create a unique id between user and target user to create room between them
   const conversationId = [value?.id, targetUser?.id].sort().join("-");
@@ -22,7 +24,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     fetchFormerChats();
     socketConnection();
     requestNotificationPermission();
-    ref.current.focus();
+    inputRef.current.focus();
 
     return () => {
       socket.current.disconnect();
@@ -31,7 +33,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
 
   /** scroll to the latest message */
   useEffect(() => {
-    const lastMessage = chatRef.current.lastChild;
+    const lastMessage = lastChildRef.current.lastChild;
     if (lastMessage) {
       lastMessage.scrollIntoView({ behavior: "smooth" });
     }
@@ -48,6 +50,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
         socket.current.emit("login", conversationId);
       });
 
+      /** fetch notifications */
       socket.current.on("notification", (payload: any) => {
         // Create a new notification
         const notification = new Notification(payload.title, {
@@ -56,15 +59,17 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
         console.log(notification, "notification received");
       });
 
-      socket.current.on("disconnect", (e: any) => {
+      /** disconnect connection when chat is left */
+      socket.current.on("disconnect", () => {
         console.log("Disconnected from server");
         setErrorMessages("");
         setChatMessages([]);
         setMessage("");
       });
 
-      socket.current.on("message", (msg: any) => {
-        setChatMessages((prev: any) => [...prev, msg]);
+      /** fetch new messages */
+      socket.current.on("message", (messageData: any) => {
+        setChatMessages((prev: any) => [...prev, messageData]);
       });
     } catch (e) {
       setErrorMessages("Connection with client failed");
@@ -84,13 +89,13 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
 
   /** send message on send button */
   const handleClick = () => {
-    sentMessage();
+    sendMessage();
   };
 
   /** send message on press enter */
   const handleEnter = (e: any) => {
     if (e.keyCode === 13) {
-      sentMessage();
+      sendMessage();
     }
   };
 
@@ -109,7 +114,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     })();
   };
   /** send message to the target user */
-  const sentMessage = () => {
+  const sendMessage = () => {
     if (message?.length) {
       let messageObj = {
         senderId: value?.id,
@@ -124,39 +129,20 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   return (
     <div className="chat-container">
       {error ? <SnackbarMessage message={error} /> : null}
+      <div className="chat-navbar">{targetUser?.name}</div>
       <div className="chat-content">
-        <div className="chat-messages" ref={chatRef}>
-          {chatMessages.map(({ message, senderId }: any) => {
-            return (
-              <div
-                key={Math.floor(Math.random() * 100000)}
-                className={`chat-bubble ${
-                  senderId === value?.id ? "sent-by-me" : ""
-                }`}
-              >
-                {message}
-              </div>
-            );
-          })}
+        <div className="chat-messages" ref={lastChildRef}>
+          <ChatMessages chatMessages={chatMessages} value={value} />
         </div>
         <div className="chat-actions-container">
           <div className="chat-actions">
-            <input
-              type="text"
-              className="chat-input"
-              ref={ref}
-              value={message}
-              placeholder="Enter your message..."
-              onChange={(e: any) => setMessage(e.target.value)}
-              onKeyDown={handleEnter}
+            <ChatInput
+              message={message}
+              setMessage={setMessage}
+              handleClick={handleClick}
+              handleEnter={handleEnter}
+              inputRef={inputRef}
             />
-            <button
-              disabled={!message?.length}
-              onClick={handleClick}
-              className="submit-btn"
-            >
-              Submit
-            </button>
           </div>
         </div>
       </div>

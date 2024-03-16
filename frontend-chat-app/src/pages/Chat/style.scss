@@ -1,4 +1,14 @@
 .chat-container {
+  .chat-navbar {
+    height: 42px;
+    background: #fff;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 13px;
+    align-items: center;
+    border: solid 1px lightblue;
+    border-radius: 5px 5px 0 0;
+  }
   .chat-content {
     background: url("/background.jpg");
     background-attachment: fixed;
@@ -6,7 +16,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 55.96rem;
+    height: 53.2rem;
     .chat-messages {
       display: flex;
       flex-direction: column;
