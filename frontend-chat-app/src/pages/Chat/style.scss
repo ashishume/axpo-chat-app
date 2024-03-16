@@ -21,8 +21,7 @@
       display: flex;
       flex-direction: column;
       padding: 15px;
-      margin-bottom: 30px;
-
+      overflow-y: auto;
       .chat-bubble {
         display: inline-block;
         height: inherit;
@@ -42,7 +41,7 @@
     }
     .chat-actions-container {
       background-color: #f0f2f5;
-      height: 72px;
+      padding: 10px;
       position: sticky;
       bottom: 0;
       display: flex;

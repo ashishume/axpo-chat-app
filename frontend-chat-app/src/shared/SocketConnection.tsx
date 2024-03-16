@@ -16,15 +16,6 @@ const socketConnection = (
       socketRef.current.emit("login", conversationId);
     });
 
-    /** fetch notifications */
-    socketRef.current.on("notification", (payload: any) => {
-      // Create a new notification
-      const notification = new Notification(payload.title, {
-        body: payload.body,
-      });
-      console.log(notification, "notification received");
-    });
-
     /** disconnect connection when chat is left */
     socketRef.current.on("disconnect", () => {
       console.log("Disconnected from server");
