@@ -6,27 +6,41 @@ import "./style.scss";
 import { fetchTargetUser, fetchUsers } from "../../shared/Utils";
 import { IUser } from "../../shared/models";
 import { SVGs } from "../../components/SvgIcons";
+import SnackbarMessage from "../../components/Snackbar";
 const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
   const [activeUser, setActiveUser] = useState(null as any);
+  const [error, setErrorMessages] = useState("");
+
   useEffect(() => {
     (async function () {
-      const res = await fetchUsers();
-      setUsers(res);
+      try {
+        const res = await fetchUsers();
+        setUsers(res);
+      } catch (e) {
+        setErrorMessages("Users fetching failed");
+      }
     })();
   }, []);
 
   const openChat = (targetId: any) => {
-    (async function () {
-      const res = await fetchTargetUser(targetId);
-      setTargetUser(res);
-      setActiveUser(targetId);
-    })();
+    if (targetId !== activeUser) {
+      (async function () {
+        try {
+          const res = await fetchTargetUser(targetId);
+          setTargetUser(res);
+          setActiveUser(targetId);
+        } catch (e) {
+          setErrorMessages("fetching failed");
+        }
+      })();
+    }
   };
   return (
     <div>
       <Navbar />
+      {error ? <SnackbarMessage message={error} /> : null}
       <div className="home-container">
         <div className="users-left-panel">
           <Users users={users} openChat={openChat} activeUser={activeUser} />
@@ -36,10 +50,17 @@ const Home = () => {
             <Chat targetUser={targetUser} />
           ) : (
             <div className="empty-container">
-              Start a interesting conversation with your friends'
-             <div className="happy-icon">
-              {SVGs().Happy}
-              </div>
+              {!error ? (
+                <>
+                  Start a interesting conversation with your friends'
+                  <div className="happy-icon">{SVGs().Happy}</div>
+                </>
+              ) : (
+                <>
+                Oops!! Something went wrong
+                <div className="happy-icon">{SVGs().Sad}</div>
+                </>
+              )}
             </div>
           )}
         </div>

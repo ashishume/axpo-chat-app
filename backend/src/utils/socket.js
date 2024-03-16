@@ -36,6 +36,14 @@ exports.connection = (io) => {
             client.emit("message", messageData);
           });
         }
+        if (clientsData[conversationId]) {
+          clientsData[conversationId].forEach((client) => {
+            client.emit("notification", {
+              title: `New message`,
+              body: message,
+            });
+          });
+        }
 
         console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
       }
