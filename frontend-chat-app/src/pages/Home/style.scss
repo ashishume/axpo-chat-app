@@ -2,10 +2,12 @@
   display: flex;
   .users-left-panel {
     flex: 1;
+    border: solid 1px lightgray;
   }
   .chat-right-panel {
     flex: 3;
-    .empty-container{
+    height: 55.89rem;
+    .empty-container {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -13,7 +15,7 @@
       height: 35rem;
       font-size: 38px;
       font-weight: 600;
-      .happy-icon{
+      .happy-icon {
         height: 80px;
         width: 80px;
       }

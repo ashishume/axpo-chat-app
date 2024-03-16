@@ -1,10 +1,11 @@
 import { Container, Box, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import InputField from "../../components/InputField";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import { IUser } from "../../shared/models";
+import "./style.scss";
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -83,7 +84,10 @@ const LoginPage = () => {
   return (
     <Container maxWidth="xs">
       <Box sx={{ mt: 8 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+        <Typography variant="h4" align="center" fontWeight="600">
+          Welcome to Axpo Chat
+        </Typography>
+        <Typography variant="h5" align="center" gutterBottom>
           {isLogin ? "Login" : "Signup"}
         </Typography>
         <Box sx={{ mt: 3 }}>
@@ -114,16 +118,24 @@ const LoginPage = () => {
             })}
 
             <Box sx={{ mt: 3 }}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                type="submit"
-              >
+              <Button fullWidth variant="contained" type="submit">
                 Submit
               </Button>
             </Box>
           </form>
+          <div className="bottom-text">
+            {isLogin ? (
+              <div>
+                Not a user?
+                <Link to="/signup"> Signup here</Link>
+              </div>
+            ) : (
+              <div>
+                Already signed up?
+                <Link to="/login"> Login here</Link>
+              </div>
+            )}
+          </div>
         </Box>
       </Box>
     </Container>

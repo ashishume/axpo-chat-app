@@ -16,8 +16,8 @@ const Users = ({
   return (
     <>
       <div className="users-container">
-        <div>
-          {users && users.map(({ id, name, email }: IUser) => {
+        {users &&
+          users.map(({ id, name, email }: IUser) => {
             return id !== value?.id ? (
               <div
                 key={id}
@@ -32,7 +32,6 @@ const Users = ({
               </div>
             ) : null;
           })}
-        </div>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 import { TextField } from "@mui/material";
-import React from "react";
 
 const InputField = ({
   value,
@@ -21,7 +20,6 @@ const InputField = ({
       value={value}
       variant="outlined"
       margin="normal"
-      autoComplete="off"
       onChange={handleChange}
     />
   );

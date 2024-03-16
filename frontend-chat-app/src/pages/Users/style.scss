@@ -1,16 +1,16 @@
 .users-container {
-  padding: 12px;
+  position: relative;
+  height: 100%;
+  width: 100%;
   .users-content {
-    border: solid 1px rgba(0, 0, 0, 0.3019607843);
-    margin: 12px 0;
-    padding: 6px;
-    border-radius: 10px;
+    border-bottom: solid 1px rgb(0 0 0 / 23%);
     display: flex;
     justify-content: flex-start;
-    padding-left: 5px;
     align-items: center;
+    padding: 5px 10px;
+    margin: 0 13px;
     &:hover {
-      background-color: #8c8c8c6e;
+      background-color: #adabab6e;
       cursor: pointer;
     }
     .icon {

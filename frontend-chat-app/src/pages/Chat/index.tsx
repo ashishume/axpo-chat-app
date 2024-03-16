@@ -1,18 +1,19 @@
 import { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
-import io from "socket.io-client";
 import "./style.scss";
 import { IUser } from "../../shared/models";
 import SnackbarMessage from "../../components/Snackbar";
 import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
 import ChatInput from "../../components/ChatInput";
+import socketConnection from "../../shared/SocketConnection";
 const Chat = ({ targetUser }: { targetUser: IUser }) => {
+  
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([] as any);
   const [error, setErrorMessages] = useState("");
-  const socket = useRef(null as any);
+  const socketRef = useRef(null as any);
   const inputRef = useRef(null as any);
   const lastChildRef = useRef(null as any);
 
@@ -22,12 +23,20 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   /** initial load */
   useEffect(() => {
     fetchFormerChats();
-    socketConnection();
+
+    socketConnection(
+      conversationId,
+      setChatMessages,
+      setErrorMessages,
+      socketRef,
+      setMessage
+    );
+
     requestNotificationPermission();
     inputRef.current.focus();
 
     return () => {
-      socket.current.disconnect();
+      socketRef.current.disconnect();
     };
   }, [targetUser]);
 
@@ -38,43 +47,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       lastMessage.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
-
-  /** socket connection establised */
-  const socketConnection = () => {
-    // Establish a socket connection
-    socket.current = io(import.meta.env.VITE_BASE_URL);
-    try {
-      // Event listeners
-      socket.current.on("connect", () => {
-        console.log("Connected to server");
-        socket.current.emit("login", conversationId);
-      });
-
-      /** fetch notifications */
-      socket.current.on("notification", (payload: any) => {
-        // Create a new notification
-        const notification = new Notification(payload.title, {
-          body: payload.body,
-        });
-        console.log(notification, "notification received");
-      });
-
-      /** disconnect connection when chat is left */
-      socket.current.on("disconnect", () => {
-        console.log("Disconnected from server");
-        setErrorMessages("");
-        setChatMessages([]);
-        setMessage("");
-      });
-
-      /** fetch new messages */
-      socket.current.on("message", (messageData: any) => {
-        setChatMessages((prev: any) => [...prev, messageData]);
-      });
-    } catch (e) {
-      setErrorMessages("Connection with client failed");
-    }
-  };
 
   /** request permission for notifications */
   const requestNotificationPermission = () => {
@@ -121,7 +93,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
         targetId: targetUser?.id,
         message,
       };
-      socket.current.emit("message", messageObj);
+      socketRef.current.emit("message", messageObj);
       setMessage("");
     }
   };
