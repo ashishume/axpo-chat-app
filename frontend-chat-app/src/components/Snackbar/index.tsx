@@ -1,4 +1,5 @@
 import { Snackbar } from "@mui/material";
+import React from "react";
 import { useEffect, useState } from "react";
 
 const SnackbarMessage = ({
@@ -27,4 +28,4 @@ const SnackbarMessage = ({
   );
 };
 
-export default SnackbarMessage;
+export default React.memo(SnackbarMessage);

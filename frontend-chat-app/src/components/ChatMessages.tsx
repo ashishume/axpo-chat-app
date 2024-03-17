@@ -1,5 +1,5 @@
 import { CircularProgress } from "@mui/material";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { IMessage, IUser } from "../shared/models";
 
 const ChatMessages = ({
@@ -31,4 +31,4 @@ const ChatMessages = ({
   );
 };
 
-export default ChatMessages;
+export default React.memo(ChatMessages);

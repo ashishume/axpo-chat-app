@@ -13,8 +13,9 @@ let clientsData = {};
 exports.connection = (io) => {
   io.on("connection", (client) => {
     /** user logged in */
-    client.on("login", (conversationId) => {
+    client.on("login", ({ conversationId, targetId }) => {
       client.conversationId = conversationId;
+      client.targetId = targetId;
       if (clientsData[conversationId]) {
         clientsData[conversationId].push(client);
       } else {
@@ -42,6 +43,7 @@ exports.connection = (io) => {
             client.emit("notification", {
               title: `New message`,
               body: message,
+              targetId,
             });
           });
         }
@@ -88,43 +90,13 @@ const updateDatabaseTable = async (messageData, conversationId) => {
 
   const { message, senderId, targetId } = messageData;
 
-  // pool.query(
-  //   "SELECT conversationId FROM chats WHERE conversationId=$1",
-  //   [conversationId],
-  //   (error, results) => {
-  //     if (error) {
-  //       throw error;
-  //     }
-  // if (!results.rowCount) {
-    pool.query(
-      'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
-      [message, senderId, targetId, conversationId],
-      (error, results) => {
-        if (error) {
-          throw error;
-        }
+  pool.query(
+    'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
+    [message, senderId, targetId, conversationId],
+    (error, results) => {
+      if (error) {
+        throw error;
       }
-    );
-  // }
-  // } else {
-  // const updateChatByConversationId = async () => {
-  //   try {
-  //     const query = `
-  //       UPDATE chats
-  //       SET message = $1,
-  //           senderId = $2,
-  //           targetId = $3
-  //       WHERE conversationId = $4
-  //     `;
-  //     const values = [message, senderId, targetId, conversationId];
-  //     await pool.query(query, values);
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // };
-
-  // updateChatByConversationId();
-  // }
-  // }
-  // );
+    }
+  );
 };

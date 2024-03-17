@@ -5,7 +5,8 @@ const socketConnection = (
   setChatMessages: Function,
   setErrorMessages: Function,
   socketRef: any,
-  setMessage: Function
+  setMessage: Function,
+  targetId: number
 ) => {
   // Establish a socket connection
   socketRef.current = io(import.meta.env.VITE_BASE_URL);
@@ -13,7 +14,7 @@ const socketConnection = (
     // Event listeners
     socketRef.current.on("connect", () => {
       console.log("Connected to server");
-      socketRef.current.emit("login", conversationId);
+      socketRef.current.emit("login", { conversationId, targetId });
     });
 
     /** disconnect connection when chat is left */

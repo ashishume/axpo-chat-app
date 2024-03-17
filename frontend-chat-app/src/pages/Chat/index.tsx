@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import "./style.scss";
 import { IUser } from "../../shared/models";
@@ -27,9 +27,10 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       setChatMessages,
       setErrorMessages,
       socketRef,
-      setMessage
+      setMessage,
+      targetUser?.id
     );
-    showNotifications();
+    // showNotifications();
     inputRef.current.focus();
     return () => {
       socketRef.current.disconnect();
@@ -83,29 +84,30 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     }
   };
 
-  const showNotifications = () => {
-    /** request permission for notifications */
-    Notification.requestPermission()
-      .then((result) => {
-        console.log("notication permission", result);
-      })
-      .catch(() => {
-        setErrorMessages("permission denied");
-      });
+  //TODO find a way to show notifications when tab is out of focus
+  // const showNotifications = () => {
+  //   /** request permission for notifications */
+  //   Notification.requestPermission()
+  //     .then((result) => {
+  //       console.log("notication permission", result);
+  //     })
+  //     .catch(() => {
+  //       setErrorMessages("permission denied");
+  //     });
 
-    /** fetch notifications */
-    socketRef.current.on(
-      "notification",
-      (payload: { title: string; body: string }) => {
-        //TODO find a way to show notifications when tab is out of focus
-        // Create a new notification
-        const notification = new Notification(payload.title, {
-          body: payload.body,
-        });
-        console.log(notification, "notification received");
-      }
-    );
-  };
+  //   /** fetch notifications */
+  //   socketRef.current.on(
+  //     "notification",
+  //     (payload: { title: string; body: string; targetId: number }) => {
+  //
+  //       // Create a new notification
+  //         const notification = new Notification(payload.title, {
+  //           body: payload.body,
+  //         });
+  //         console.log(notification, "notification received");
+  //     }
+  //   );
+  // };
   return (
     <div className="chat-container">
       {error ? <SnackbarMessage message={error} /> : null}
@@ -130,4 +132,4 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   );
 };
 
-export default Chat;
+export default React.memo(Chat);

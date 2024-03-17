@@ -2,6 +2,7 @@ import { IUser } from "../../shared/models";
 import "./style.scss";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import { SVGs } from "../../components/SvgIcons";
+import React from "react";
 const Users = ({
   users,
   activeUser,
@@ -37,4 +38,4 @@ const Users = ({
   );
 };
 
-export default Users;
+export default React.memo(Users);
