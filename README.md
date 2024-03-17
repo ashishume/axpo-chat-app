@@ -26,3 +26,7 @@ To run this project locally, follow these steps:
    npm start
    ```
    - Note: Start the server on the root of the project, it will start both the servers at once
+
+
+https://github.com/ashishume/axpo-chat-app/assets/21136600/bf80a0bf-db90-4e31-9058-50921ac3598b
+
