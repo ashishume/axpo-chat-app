@@ -22,11 +22,32 @@ To run this project locally, follow these steps:
 1. Clone the repository:
    ```bash
    git clone https://github.com/ashishume/axpo-chat-app.git
-   npm install
+   ```
+2. install backend dependencies
+   ```bash
+     cd backend && npm install
+   ```
+3. install frontend dependencies
+
+   ```bash
+     cd frontend-chat-app && npm install
+   ```
+
+4. Create a .env file inside frontend folder and add these environment variables
+
+   ```bash
+   VITE_BASE_API_URL= http://localhost:9000/api/v1
+   VITE_BASE_URL= http://localhost:9000
+   ```
+
+5. Create a .env file inside backend folder add these environment variables
+   ```bash
+   DATABASE_URL=postgres://postgres:admin@localhost:5432/chat-app
+   ```
+6. Start the server on the root folder (outside of backend and frontend)
+   ```bash
    npm start
    ```
-   - Note: Start the server on the root of the project, it will start both the servers at once
-
+   - Note: Server will start both the servers concurrently
 
 https://github.com/ashishume/axpo-chat-app/assets/21136600/bf80a0bf-db90-4e31-9058-50921ac3598b
-
