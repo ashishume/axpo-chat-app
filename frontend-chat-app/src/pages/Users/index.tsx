@@ -18,7 +18,7 @@ const Users = ({
     <>
       <div className="users-container">
         {users &&
-          users.map(({ id, name, email }: IUser) => {
+          users.map(({ id, name, lastMessage }: IUser) => {
             return id !== value?.id ? (
               <div
                 key={id}
@@ -28,7 +28,7 @@ const Users = ({
                 <div className="icon">{SVGs().User}</div>
                 <div className="users-data">
                   <div>{name}</div>
-                  <div>{email}</div>
+                  <div className="last-message">{lastMessage}</div>
                 </div>
               </div>
             ) : null;

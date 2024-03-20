@@ -1,6 +1,8 @@
 import axios from "axios";
-export const fetchUsers = async () => {
-  const usersUrl = `${import.meta.env.VITE_BASE_API_URL}/users`;
+export const fetchUsersWithLastMessage = async (userId: number) => {
+  const usersUrl = `${
+    import.meta.env.VITE_BASE_API_URL
+  }/users-with-last-message?userId=${userId}`;
   const res = await axios.get(usersUrl);
   if (res.status === 200) {
     return res.data;

@@ -3,20 +3,21 @@ import Navbar from "../../components/Navbar/Navbar";
 import Chat from "../Chat";
 import Users from "../Users";
 import "./style.scss";
-import { fetchTargetUser, fetchUsers } from "../../shared/Utils";
+import { fetchTargetUser, fetchUsersWithLastMessage } from "../../shared/Utils";
 import { IUser } from "../../shared/models";
 import { SVGs } from "../../components/SvgIcons";
 import SnackbarMessage from "../../components/Snackbar";
+import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
   const [activeUser, setActiveUser] = useState(null as any);
   const [error, setErrorMessages] = useState("");
-
+  const { value } = useLocalStorage("auth");
   useEffect(() => {
     (async function () {
       try {
-        const res = await fetchUsers();
+        const res = await fetchUsersWithLastMessage(value?.id);
         setUsers(res);
       } catch (e) {
         setErrorMessages("Users fetching failed");
@@ -57,8 +58,8 @@ const Home = () => {
                 </>
               ) : (
                 <>
-                Oops!! Something went wrong
-                <div className="happy-icon">{SVGs().Sad}</div>
+                  Oops!! Something went wrong
+                  <div className="happy-icon">{SVGs().Sad}</div>
                 </>
               )}
             </div>

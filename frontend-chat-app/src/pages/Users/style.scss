@@ -3,6 +3,7 @@
   height: 100%;
   width: 100%;
   .users-content {
+    overflow-x: hidden;
     border-bottom: solid 1px rgb(0 0 0 / 23%);
     display: flex;
     justify-content: flex-start;
@@ -20,6 +21,14 @@
       display: flex;
       flex-direction: column;
       padding-left: 10px;
+      .last-message {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 250px;
+        color: rgb(163, 163, 163);
+        font-size: 13px;
+      }
     }
   }
   .active {
