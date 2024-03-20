@@ -43,7 +43,9 @@ socketUtils.connection(io);
 app.get("/", (req, res) => {
   res.send("Welcome to chat app");
 });
-app.use(routes);
+
+/** all the api routes */
+routes(app, io);
 
 pool
   .connect()

@@ -72,11 +72,6 @@ exports.connection = (io) => {
   });
 };
 
-exports.socketIOMiddleware = (req, res, next) => {
-  req.io = io;
-  next();
-};
-
 /**
  * store the chats to the database
  * @param {*} messageData
