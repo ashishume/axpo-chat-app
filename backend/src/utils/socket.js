@@ -69,6 +69,18 @@ exports.connection = (io) => {
 
       console.log(`connection disconnected:${client.conversationId}`);
     });
+
+    //TODO: use room based approach for chatting 
+    // client.on("login", ({ userId }) => {
+    //   // Join a room based on the user's ID
+    //   client.join(userId);
+
+    //   // Handle onlineStatus event for the specific user
+    //   client.on("onlineStatus", ({ isOnline }) => {
+    //     // Emit the online status to all clients in the same room (user's ID)
+    //     io.to(userId).emit("onlineStatus", { userId, isOnline });
+    //   });
+    // });
   });
 };
 

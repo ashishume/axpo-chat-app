@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Chat from "../Chat";
 import Users from "../Users";
@@ -8,9 +8,12 @@ import { IUser } from "../../shared/models";
 import { SVGs } from "../../components/SvgIcons";
 import SnackbarMessage from "../../components/Snackbar";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
+import { io } from "socket.io-client";
 const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
+  const socketRef = useRef(null as any);
+
   const [activeUser, setActiveUser] = useState(null as any);
   const [error, setErrorMessages] = useState("");
   const { value } = useLocalStorage("auth");
@@ -23,6 +26,10 @@ const Home = () => {
         setErrorMessages("Users fetching failed");
       }
     })();
+
+    socketRef.current = io(import.meta.env.VITE_BASE_URL);
+    userOnline();
+    
   }, []);
 
   const openChat = (targetId: any) => {
@@ -37,6 +44,15 @@ const Home = () => {
         }
       })();
     }
+  };
+
+  const userOnline = () => {
+    console.log("called");
+
+    socketRef.current.emit("onlineStatus", {
+      userId: value.id,
+      isOnline: true,
+    });
   };
   return (
     <div>

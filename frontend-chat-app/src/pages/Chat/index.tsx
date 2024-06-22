@@ -6,7 +6,7 @@ import SnackbarMessage from "../../components/Snackbar";
 import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
 import ChatInput from "../../components/ChatInput";
-import socketConnection from "../../shared/SocketConnection";
+import { socketConnection } from "../../shared/SocketConnection";
 const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");

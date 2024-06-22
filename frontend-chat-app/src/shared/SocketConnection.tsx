@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-const socketConnection = (
+export const socketConnection = (
   conversationId: string,
   setChatMessages: Function,
   setErrorMessages: Function,
@@ -29,9 +29,9 @@ const socketConnection = (
     socketRef.current.on("message", (messageData: any) => {
       setChatMessages((prev: any) => [...prev, messageData]);
     });
+
+    // socketRef.current.on("onlineStatus", ({ userId, isOnline }: any) => {});
   } catch (e) {
     setErrorMessages("Connection with client failed");
   }
 };
-
-export default socketConnection;
