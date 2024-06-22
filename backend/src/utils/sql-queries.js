@@ -5,7 +5,7 @@ const createTables = async () => {
 
   try {
     await client.query(`
-    CREATE TABLE users (
+    CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
@@ -14,7 +14,7 @@ const createTables = async () => {
       `);
 
     await client.query(`
-    CREATE TABLE chats (
+    CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY,
       message TEXT NOT NULL,
       "targetId" INTEGER NOT NULL,

@@ -23,8 +23,6 @@ app.use(
   })
 );
 
-createTables();
-
 // Create a HTTP server using Express app
 const server = http.createServer(app);
 
@@ -38,6 +36,8 @@ app.get("/", (req, res) => {
 
 /** all the api routes */
 routes(app, io);
+
+createTables();
 
 // Start the HTTP server only after database connection is established
 const PORT = process.env.PORT || 9000;
