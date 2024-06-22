@@ -1,5 +1,5 @@
 const express = require("express");
-const { pool, tableExists, createChatTable } = require("../utils/sql-queries");
+const pool = require("../utils/db-connect");
 const router = express.Router();
 /**
  * APTH PATH: /api/v1/chats
@@ -7,10 +7,7 @@ const router = express.Router();
 module.exports = (io) => {
   router.get("/chats", async (request, response) => {
     const { conversationId } = request.query;
-    // Check if the table exists, if not, create it
-    if (!(await tableExists("chats"))) {
-      await createChatTable();
-    }
+  
     pool.query(
       'SELECT * FROM chats WHERE "conversationId" = $1',
       [conversationId],

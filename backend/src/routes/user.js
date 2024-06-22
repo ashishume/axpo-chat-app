@@ -1,12 +1,11 @@
 const express = require("express");
-const { createUserTable, tableExists, pool } = require("../utils/sql-queries");
+const pool = require("../utils/db-connect");
 const router = express.Router();
 module.exports = (io) => {
   /**
    * APTH PATH: /api/v1/users
    */
   router.get("/users", async (request, response) => {
-  
     pool.query(
       "SELECT id,email,name FROM users ORDER BY id ASC",
       (error, results) => {
@@ -105,11 +104,6 @@ module.exports = (io) => {
    */
   router.post("/signup", async (request, response) => {
     const { name, email, password } = request.body;
-
-    // Check if the table exists, if not, create it
-    if (!(await tableExists("users"))) {
-      await createUserTable();
-    }
 
     // Insert user into the database
     pool.query(

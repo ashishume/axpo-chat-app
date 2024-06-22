@@ -1,5 +1,5 @@
 const socketIO = require("socket.io");
-const { createChatTable, tableExists, pool } = require("./sql-queries");
+const pool = require("../utils/db-connect");
 
 exports.io = (server) => {
   return socketIO(server, {
@@ -70,7 +70,7 @@ exports.connection = (io) => {
       console.log(`connection disconnected:${client.conversationId}`);
     });
 
-    //TODO: use room based approach for chatting 
+    //TODO: use room based approach for chatting
     // client.on("login", ({ userId }) => {
     //   // Join a room based on the user's ID
     //   client.join(userId);
@@ -90,11 +90,6 @@ exports.connection = (io) => {
  * @param {*} conversationId
  */
 const updateDatabaseTable = async (messageData, conversationId) => {
-  // Check if the table exists, if not, create it
-  if (!(await tableExists("chats"))) {
-    await createChatTable();
-  }
-
   const { message, senderId, targetId } = messageData;
 
   pool.query(
