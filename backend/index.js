@@ -4,7 +4,6 @@ const routes = require("./src/api-routes");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const socketUtils = require("./src/utils/socket");
-const createTables = require("./src/utils/sql-queries");
 require("dotenv").config();
 // Create an Express application
 const app = express();
@@ -37,7 +36,6 @@ app.get("/", (req, res) => {
 /** all the api routes */
 routes(app, io);
 
-createTables();
 
 // Start the HTTP server only after database connection is established
 const PORT = process.env.PORT || 9000;
