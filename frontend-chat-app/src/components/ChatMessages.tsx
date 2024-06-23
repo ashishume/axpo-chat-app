@@ -6,7 +6,7 @@ const ChatMessages = ({
   chatMessages,
   value,
 }: {
-  chatMessages: IMessage[];
+  chatMessages: IMessage[] | null;
   value: IUser;
 }) => {
   return (
@@ -24,9 +24,9 @@ const ChatMessages = ({
             </div>
           );
         })
-      ) : (
+      ) : chatMessages === null ? (
         <CircularProgress />
-      )}
+      ) : null}
     </Fragment>
   );
 };

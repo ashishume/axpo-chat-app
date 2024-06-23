@@ -9,18 +9,13 @@ exports.io = (server) => {
     },
   });
 };
-let clientsData = {};
 exports.connection = (io) => {
   io.on("connection", (client) => {
     /** user logged in */
     client.on("login", ({ conversationId, targetId }) => {
       client.conversationId = conversationId;
       client.targetId = targetId;
-      if (clientsData[conversationId]) {
-        clientsData[conversationId].push(client);
-      } else {
-        clientsData[conversationId] = [client];
-      }
+      client.join(conversationId);
       console.log(`connection established:${conversationId}`);
     });
 
@@ -31,22 +26,13 @@ exports.connection = (io) => {
       // Check if both sender and target are valid and not the same
       if (senderId && targetId && senderId !== targetId) {
         const conversationId = [senderId, targetId].sort().join("-"); // Unique identifier for the conversation
-
-        // Send the message to all clients associated with the conversationId
-        if (clientsData[conversationId]) {
-          clientsData[conversationId].forEach((client) => {
-            client.emit("message", messageData);
-          });
-        }
-        if (clientsData[conversationId]) {
-          clientsData[conversationId].forEach((client) => {
-            client.emit("notification", {
-              title: `New message`,
-              body: message,
-              targetId,
-            });
-          });
-        }
+        // Send the message to the room corresponding to the conversationId
+        io.to(conversationId).emit("message", messageData);
+        io.to(conversationId).emit("notification", {
+          title: `New message`,
+          body: message,
+          targetId,
+        });
         if (conversationId) {
           await updateDatabaseTable(messageData, conversationId);
         }
@@ -56,17 +42,11 @@ exports.connection = (io) => {
 
     /** connection disconnected */
     client.on("disconnect", () => {
-      if (!client.conversationId || !clientsData[client.conversationId]) {
-        return;
+      if (client.conversationId) {
+        // Leave the room corresponding to the conversationId
+        client.leave(client.conversationId);
+        console.log(`connection disconnected:${client.conversationId}`);
       }
-
-      let conversationClients = clientsData[client.conversationId];
-      for (let i = 0; i < conversationClients.length; ++i) {
-        if (conversationClients[i] == client) {
-          conversationClients.splice(i, 1);
-        }
-      }
-
       console.log(`connection disconnected:${client.conversationId}`);
     });
 
@@ -90,15 +70,19 @@ exports.connection = (io) => {
  * @param {*} conversationId
  */
 const updateDatabaseTable = async (messageData, conversationId) => {
-  const { message, senderId, targetId } = messageData;
-
-  pool.query(
-    'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
-    [message, senderId, targetId, conversationId],
-    (error, results) => {
-      if (error) {
-        throw error;
+  try {
+    const { message, senderId, targetId } = messageData;
+    pool.query(
+      'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
+      [message, senderId, targetId, conversationId],
+      (error, results) => {
+        if (error) {
+          throw error;
+        }
       }
-    }
-  );
+    );
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 };

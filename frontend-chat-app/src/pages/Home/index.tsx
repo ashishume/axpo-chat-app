@@ -47,8 +47,6 @@ const Home = () => {
   };
 
   const userOnline = () => {
-    console.log("called");
-
     socketRef.current.emit("onlineStatus", {
       userId: value.id,
       isOnline: true,

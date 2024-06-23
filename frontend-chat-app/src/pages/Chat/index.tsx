@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import "./style.scss";
-import { IUser } from "../../shared/models";
+import { IMessage, IUser } from "../../shared/models";
 import SnackbarMessage from "../../components/Snackbar";
 import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
@@ -10,7 +10,7 @@ import { socketConnection } from "../../shared/SocketConnection";
 const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState([] as any);
+  const [chatMessages, setChatMessages] = useState<null | IMessage[]>(null);
   const [error, setErrorMessages] = useState("");
   const socketRef = useRef(null as any);
   const inputRef = useRef(null as any);
