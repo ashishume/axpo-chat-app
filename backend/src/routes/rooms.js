@@ -7,7 +7,9 @@ module.exports = (io) => {
     try {
       const { senderId, targetId, name, isGroup } = req.body;
       if (!isGroup) {
-        const sortedIds = [senderId, targetId].sort((a, b) => a - b);
+        const sortedIds = [senderId, targetId].sort((a, b) =>
+          a.localeCompare(b)
+        );
         const roomName = `DM_${sortedIds[0]}_${sortedIds[1]}`;
 
         let roomExists = await Room.findOne({

@@ -36,7 +36,8 @@ module.exports = (io) => {
       const { email, password } = req.body;
 
       //add check for duplicate
-      const user = await User.findOne({ email, password });
+      const user = await User.findOne({ where: { email, password } });
+
       return res.status(200).json({
         message: "login success",
         user: {

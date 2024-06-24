@@ -28,7 +28,7 @@ const Users = ({
                 <div className="icon">{SVGs().User}</div>
                 <div className="users-data">
                   <div>{name}</div>
-                  <div className="last-message">{lastMessage}</div>
+                  {/* <div className="last-message">{lastMessage}</div> */}
                 </div>
               </div>
             ) : null;

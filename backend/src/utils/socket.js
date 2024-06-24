@@ -24,22 +24,21 @@ exports.connection = (io) => {
     client.on("message", async (messageData) => {
       const { senderId, message } = messageData;
 
-      if (senderId && message) {
+      if (senderId && message && client.roomId) {
         io.to(client.roomId).emit("message", messageData);
         // io.to(roomId).emit("notification", {
         //   title: `New message`,
         //   body: message,
         //   targetId,
         // });
-        if (client.roomId) {
-          await updateMessagesToDB(messageData, client.roomId);
-        }
+        await updateMessagesToDB(messageData, client.roomId);
         // console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
       }
     });
 
     /** connection disconnected */
     client.on("disconnect", () => {
+      console.log(client.roomId);
       if (client.roomId) {
         // Leave the room corresponding to the roomId
         client.leave(client.roomId);
@@ -78,7 +77,7 @@ const updateMessagesToDB = async (messageData, roomId) => {
 
     console.log("message added", messages);
   } catch (err) {
-    console.log({ message: "message sending failed", erro });
+    console.log({ message: "message sending failed", err });
     throw err;
   }
 };
