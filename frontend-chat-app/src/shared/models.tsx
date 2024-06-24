@@ -1,5 +1,5 @@
 export interface IUser {
-  id: number;
+  id: string;
   name: string;
   email?: string;
   lastMessage?: string;
@@ -7,10 +7,25 @@ export interface IUser {
   label: string;
   value: string;
 }
-export interface IMessage {
-  id: number;
+
+export interface IRoomPayload {
+  userId: string;
+  targetId: string;
+  name?: string;
+  isGroup: boolean;
+}
+export interface IRoomResponse {
+  createdAt: string;
+  id: string;
+  isGroup: boolean;
+  name: string;
+  updatedAt: string;
+}
+export interface IChatBubble {
+  createdAt: string;
+  id?: string;
   message: string;
-  targetId: number;
-  senderId: number;
-  conversationId: string;
+  roomId: string;
+  updatedAt?: string;
+  userId: string;
 }

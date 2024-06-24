@@ -3,8 +3,12 @@ import Navbar from "../../components/Navbar/Navbar";
 import Chat from "../Chat";
 import Users from "../Users";
 import "./style.scss";
-import { fetchTargetUser, fetchUsersWithLastMessage } from "../../shared/Utils";
-import { IUser } from "../../shared/models";
+import {
+  fetchRoomData,
+  fetchTargetUser,
+  fetchUsersWithLastMessage,
+} from "../../shared/Utils";
+import { IRoomResponse, IUser } from "../../shared/models";
 import { SVGs } from "../../components/SvgIcons";
 import SnackbarMessage from "../../components/Snackbar";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
@@ -13,6 +17,7 @@ const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
   const socketRef = useRef(null as any);
+  const [room, setRoom] = useState(null as IRoomResponse | null);
 
   const [activeUser, setActiveUser] = useState(null as any);
   const [error, setErrorMessages] = useState("");
@@ -27,10 +32,41 @@ const Home = () => {
       }
     })();
 
-    socketRef.current = io(import.meta.env.VITE_BASE_URL);
+    // fetchRoomDetails();
+
+    socketRef.current = io(import.meta.env.VITE_BASE_URL, {
+      transports: ["websocket", "polling"],
+    });
     userOnline();
-    
+
+    return () => {
+      setRoom(null);
+    };
   }, []);
+
+  /**
+   * fetching past chat conversations
+   * @param conversationId
+   */
+  const fetchRoomDetails = async () => {
+    try {
+      if (targetUser && value) {
+        const roomDetails = await fetchRoomData({
+          userId: value.id,
+          targetId: targetUser.id,
+          isGroup: false,
+        });
+        
+        await setRoom(roomDetails);
+      }
+    } catch (e) {
+      setErrorMessages("fetching failed");
+    }
+  };
+
+  useEffect(() => {
+    if (targetUser) fetchRoomDetails();
+  }, [targetUser]);
 
   const openChat = (targetId: any) => {
     if (targetId !== activeUser) {
@@ -62,7 +98,7 @@ const Home = () => {
         </div>
         <div className="chat-right-panel">
           {targetUser ? (
-            <Chat targetUser={targetUser} />
+            <Chat room={room} targetUser={targetUser} />
           ) : (
             <div className="empty-container">
               {!error ? (

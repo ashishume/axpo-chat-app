@@ -1,9 +1,9 @@
 const socketIO = require("socket.io");
-const pool = require("../utils/db-connect");
+const { Message } = require("../db/db");
 
 exports.io = (server) => {
   return socketIO(server, {
-    transports: ["polling"],
+    transports: ["websocket", "polling"],
     cors: {
       origin: "*",
     },
@@ -12,55 +12,40 @@ exports.io = (server) => {
 exports.connection = (io) => {
   io.on("connection", (client) => {
     /** user logged in */
-    client.on("login", ({ conversationId, targetId }) => {
-      client.conversationId = conversationId;
-      client.targetId = targetId;
-      client.join(conversationId);
-      console.log(`connection established:${conversationId}`);
+    client.on("login", ({ roomId, userId }) => {
+      client.roomId = roomId;
+      client.userId = userId;
+      client.join(roomId);
+      console.log(`connection established:${roomId}`);
     });
 
     /** message communication */
     client.on("message", async (messageData) => {
-      const { senderId, targetId, message } = messageData;
+      const { userId, message } = messageData;
 
-      // Check if both sender and target are valid and not the same
-      if (senderId && targetId && senderId !== targetId) {
-        const conversationId = [senderId, targetId].sort().join("-"); // Unique identifier for the conversation
-        // Send the message to the room corresponding to the conversationId
-        io.to(conversationId).emit("message", messageData);
-        io.to(conversationId).emit("notification", {
-          title: `New message`,
-          body: message,
-          targetId,
+      if (userId && message && client.roomId) {
+        io.to(client.roomId).emit("message", {
+          ...messageData,
+          createdAt: new Date().toISOString(),
+          roomId: client.roomId,
         });
-        if (conversationId) {
-          await updateDatabaseTable(messageData, conversationId);
-        }
-        console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
+        // io.to(roomId).emit("notification", {
+        //   title: `New message`,
+        //   body: message,
+        //   targetId,
+        // });
+        await updateMessagesToDB(messageData, client.roomId);
       }
     });
 
     /** connection disconnected */
     client.on("disconnect", () => {
-      if (client.conversationId) {
-        // Leave the room corresponding to the conversationId
-        client.leave(client.conversationId);
-        console.log(`connection disconnected:${client.conversationId}`);
+      if (client.roomId) {
+        // Leave the room corresponding to the roomId
+        console.log(`connection disconnected:${client.roomId}`);
+        client.leave(client.roomId);
       }
-      console.log(`connection disconnected:${client.conversationId}`);
     });
-
-    //TODO: use room based approach for chatting
-    // client.on("login", ({ userId }) => {
-    //   // Join a room based on the user's ID
-    //   client.join(userId);
-
-    //   // Handle onlineStatus event for the specific user
-    //   client.on("onlineStatus", ({ isOnline }) => {
-    //     // Emit the online status to all clients in the same room (user's ID)
-    //     io.to(userId).emit("onlineStatus", { userId, isOnline });
-    //   });
-    // });
   });
 };
 
@@ -69,20 +54,16 @@ exports.connection = (io) => {
  * @param {*} messageData
  * @param {*} conversationId
  */
-const updateDatabaseTable = async (messageData, conversationId) => {
+const updateMessagesToDB = async (messageData, roomId) => {
   try {
-    const { message, senderId, targetId } = messageData;
-    pool.query(
-      'INSERT INTO chats (message, "senderId", "targetId", "conversationId") VALUES ($1, $2, $3, $4) RETURNING *',
-      [message, senderId, targetId, conversationId],
-      (error, results) => {
-        if (error) {
-          throw error;
-        }
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    throw e;
+    const { userId, message } = messageData;
+    const messages = await Message.create({
+      message,
+      roomId,
+      userId,
+    });
+  } catch (err) {
+    console.log({ message: "message sending failed", err });
+    throw err;
   }
 };

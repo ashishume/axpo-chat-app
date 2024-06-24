@@ -1,20 +1,22 @@
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 
 export const socketConnection = (
-  conversationId: string,
+  roomId: string,
+  userId: string,
   setChatMessages: Function,
   setErrorMessages: Function,
   socketRef: any,
-  setMessage: Function,
-  targetId: number
+  setMessage: Function
 ) => {
   // Establish a socket connection
-  socketRef.current = io(import.meta.env.VITE_BASE_URL);
+  socketRef.current = io(import.meta.env.VITE_BASE_URL, {
+    transports: ["websocket", "polling"],
+  });
   try {
     // Event listeners
     socketRef.current.on("connect", () => {
       console.log("Connected to server");
-      socketRef.current.emit("login", { conversationId, targetId });
+      socketRef.current.emit("login", { roomId, userId });
     });
 
     /** disconnect connection when chat is left */

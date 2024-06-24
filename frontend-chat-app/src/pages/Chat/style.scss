@@ -1,15 +1,15 @@
 .chat-container {
   width: 100%;
-  .chat-navbar {
-    height: 40px;
-    background: #fff;
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 13px;
-    align-items: center;
-    border: solid 1px lightblue;
-    border-radius: 5px 5px 0 0;
-  }
+  // .chat-navbar {
+  //   height: 40px;
+  //   background: #fff;
+  //   display: flex;
+  //   justify-content: flex-start;
+  //   padding-left: 13px;
+  //   align-items: center;
+  //   border: solid 1px lightblue;
+  //   border-radius: 5px 5px 0 0;
+  // }
   .chat-content {
     background: url("/background.jpg");
     background-attachment: fixed;
@@ -23,22 +23,6 @@
       flex-direction: column;
       padding: 15px;
       overflow-y: auto;
-      .chat-bubble {
-        display: inline-block;
-        height: inherit;
-        width: 300px;
-        padding: 10px;
-        border-radius: 20px;
-        margin: 10px;
-        border: solid 1px #8080804d;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        background: #fff;
-      }
-      .sent-by-me {
-        background: #d9fdd3;
-        align-self: flex-end;
-      }
     }
     .chat-actions-container {
       background-color: #f0f2f5;
@@ -52,15 +36,6 @@
         display: flex;
         gap: 10px;
         width: 96%;
-        .chat-input {
-          padding: 10px;
-          font-size: 15px;
-          border-radius: 25px;
-          border: solid 1px lightgray;
-          width: 100%;
-          height: 25px;
-          outline: none;
-        }
         .submit-btn {
           width: 120px;
           border-radius: 25px;
