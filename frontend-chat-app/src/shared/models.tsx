@@ -7,14 +7,6 @@ export interface IUser {
   label: string;
   value: string;
 }
-export interface IMessage {
-  id: string;
-  message: string;
-  targetId: number;
-  userId: number;
-  conversationId: string;
-}
-
 
 export interface IRoomPayload {
   userId: string;
@@ -28,4 +20,12 @@ export interface IRoomResponse {
   isGroup: boolean;
   name: string;
   updatedAt: string;
+}
+export interface IChatBubble {
+  createdAt: string;
+  id?: string;
+  message: string;
+  roomId: string;
+  updatedAt?: string;
+  userId: string;
 }

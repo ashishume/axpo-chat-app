@@ -18,7 +18,7 @@ const ChatInput = ({
     <Fragment>
       <input
         type="text"
-        className="chat-input"
+        className="p-2.5 text-base rounded-full border border-gray-300 w-full h-[45px] outline-none"
         ref={inputRef}
         value={message}
         placeholder="Enter your message..."

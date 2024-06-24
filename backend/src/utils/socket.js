@@ -24,7 +24,11 @@ exports.connection = (io) => {
       const { userId, message } = messageData;
 
       if (userId && message && client.roomId) {
-        io.to(client.roomId).emit("message", messageData);
+        io.to(client.roomId).emit("message", {
+          ...messageData,
+          createdAt: new Date().toISOString(),
+          roomId: client.roomId,
+        });
         // io.to(roomId).emit("notification", {
         //   title: `New message`,
         //   body: message,

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import "./style.scss";
-import { IMessage, IRoomResponse, IUser } from "../../shared/models";
+import { IChatBubble, IRoomResponse, IUser } from "../../shared/models";
 import SnackbarMessage from "../../components/Snackbar";
 import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
@@ -16,7 +16,7 @@ const Chat = ({
 }) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState<null | IMessage[]>(null);
+  const [chatMessages, setChatMessages] = useState<null | IChatBubble[]>(null);
   const [error, setErrorMessages] = useState("");
   const socketRef = useRef(null as any);
   const inputRef = useRef(null as any);
