@@ -7,6 +7,7 @@ import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
 import ChatInput from "../../components/ChatInput";
 import { socketConnection } from "../../shared/SocketConnection";
+import { AccountCircle } from "@mui/icons-material";
 const Chat = ({
   targetUser,
   room,
@@ -80,7 +81,12 @@ const Chat = ({
   return (
     <div className="chat-container">
       {error ? <SnackbarMessage message={error} /> : null}
-      <div className="chat-navbar">{targetUser?.name}</div>
+      <div className="h-10 bg-white flex justify-start pl-3 border items-center drop-shadow-md">
+        <div className="px-1">
+          <AccountCircle fontSize="medium" />
+        </div>
+        {targetUser?.name}
+      </div>
       <div className="chat-content">
         <div className="chat-messages" ref={lastChildRef}>
           <ChatMessages chatMessages={chatMessages} value={value} />

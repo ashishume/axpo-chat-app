@@ -15,24 +15,25 @@ const ChatMessages = ({
       {chatMessages?.length ? (
         chatMessages.map(({ message, userId, createdAt }: IChatBubble) => {
           return (
-            <div
-              key={Math.floor(Math.random() * 100000)}
-              className={`drop-shadow-lg inline-block h-inherit w-[300px] p-2.5 
+            <Fragment key={createdAt}>
+              <div
+                className={`drop-shadow-lg inline-block h-inherit w-[300px] p-2.5 
                 rounded-xl m-2.5 border border-gray-400/30 break-words text-base ${
                   userId === value?.id
                     ? "bg-teal-800	self-end text-white"
                     : "bg-white"
                 }`}
-            >
-              {message}
-              <div className="text-xs flex justify-end">
-                {new Date(createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: undefined,
-                })}
+              >
+                {message}
+                <div className="text-xs flex justify-end">
+                  {new Date(createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: undefined,
+                  })}
+                </div>
               </div>
-            </div>
+            </Fragment>
           );
         })
       ) : chatMessages === null ? (

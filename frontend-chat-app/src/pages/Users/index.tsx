@@ -1,8 +1,8 @@
 import { IUser } from "../../shared/models";
 import "./style.scss";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
-import { SVGs } from "../../components/SvgIcons";
 import React from "react";
+import { AccountCircle } from "@mui/icons-material";
 const Users = ({
   users,
   activeUser,
@@ -25,7 +25,9 @@ const Users = ({
                 className={`users-content ${activeUser === id ? "active" : ""}`}
                 onClick={() => openChat(id)}
               >
-                <div className="icon">{SVGs().User}</div>
+                <div className="icon">
+                  <AccountCircle fontSize="large" />
+                </div>
                 <div className="users-data">
                   <div>{name}</div>
                   {/* <div className="last-message">{lastMessage}</div> */}
