@@ -7,12 +7,12 @@ import {
   fetchRoomData,
   fetchTargetUser,
   fetchUsersWithLastMessage,
-  socketConnectionUrl,
 } from "../../shared/Utils";
 import { IRoomResponse, IUser } from "../../shared/models";
 import { SVGs } from "../../components/SvgIcons";
 import SnackbarMessage from "../../components/Snackbar";
 import useLocalStorage from "../../shared/Hooks/useLocalStorage";
+import { io } from "socket.io-client";
 const Home = () => {
   const [targetUser, setTargetUser] = useState(null as any);
   const [users, setUsers] = useState([] as IUser[]);
@@ -32,9 +32,11 @@ const Home = () => {
       }
     })();
 
-    fetchRoomDetails();
+    // fetchRoomDetails();
 
-    socketRef.current = socketConnectionUrl;
+    socketRef.current = io(import.meta.env.VITE_BASE_URL, {
+      transports: ["websocket", "polling"],
+    });
     userOnline();
 
     return () => {
@@ -48,16 +50,23 @@ const Home = () => {
    */
   const fetchRoomDetails = async () => {
     try {
-      const roomDetails = await fetchRoomData({
-        userId: value?.id,
-        targetId: targetUser?.id,
-        isGroup: false,
-      });
-      await setRoom(roomDetails);
+      if (targetUser && value) {
+        const roomDetails = await fetchRoomData({
+          userId: value.id,
+          targetId: targetUser.id,
+          isGroup: false,
+        });
+        
+        await setRoom(roomDetails);
+      }
     } catch (e) {
       setErrorMessages("fetching failed");
     }
   };
+
+  useEffect(() => {
+    if (targetUser) fetchRoomDetails();
+  }, [targetUser]);
 
   const openChat = (targetId: any) => {
     if (targetId !== activeUser) {
@@ -66,7 +75,7 @@ const Home = () => {
           const res = await fetchTargetUser(targetId);
           setTargetUser(res);
           setActiveUser(targetId);
-          fetchRoomDetails()
+          // fetchRoomDetails();
         } catch (e) {
           setErrorMessages("fetching failed");
         }

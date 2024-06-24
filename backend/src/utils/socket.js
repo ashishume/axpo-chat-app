@@ -38,8 +38,8 @@ exports.connection = (io) => {
     client.on("disconnect", () => {
       if (client.roomId) {
         // Leave the room corresponding to the roomId
-        client.leave(client.roomId);
         console.log(`connection disconnected:${client.roomId}`);
+        client.leave(client.roomId);
       }
     });
   });
