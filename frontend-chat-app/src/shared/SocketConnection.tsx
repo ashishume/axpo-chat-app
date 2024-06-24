@@ -2,19 +2,21 @@ import io from "socket.io-client";
 
 export const socketConnection = (
   roomId: string,
-  senderId: string,
+  userId: string,
   setChatMessages: Function,
   setErrorMessages: Function,
   socketRef: any,
   setMessage: Function
 ) => {
   // Establish a socket connection
-  socketRef.current = io(import.meta.env.VITE_BASE_URL);
+  socketRef.current = io(import.meta.env.VITE_BASE_URL, {
+    transports: ["websocket", "polling"],
+  });
   try {
     // Event listeners
     socketRef.current.on("connect", () => {
       console.log("Connected to server");
-      socketRef.current.emit("login", { roomId, senderId });
+      socketRef.current.emit("login", { roomId, userId });
     });
 
     /** disconnect connection when chat is left */

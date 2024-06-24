@@ -5,9 +5,9 @@ const router = express.Router();
 module.exports = (io) => {
   router.post("/room", async (req, res) => {
     try {
-      const { senderId, targetId, name, isGroup } = req.body;
+      const { userId, targetId, name, isGroup } = req.body;
       if (!isGroup) {
-        const sortedIds = [senderId, targetId].sort((a, b) =>
+        const sortedIds = [userId, targetId].sort((a, b) =>
           a.localeCompare(b)
         );
         const roomName = `DM_${sortedIds[0]}_${sortedIds[1]}`;

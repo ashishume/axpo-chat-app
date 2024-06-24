@@ -12,12 +12,12 @@ const ChatMessages = ({
   return (
     <Fragment>
       {chatMessages?.length ? (
-        chatMessages.map(({ message, senderId }: any) => {
+        chatMessages.map(({ message, userId }: any) => {
           return (
             <div
               key={Math.floor(Math.random() * 100000)}
               className={`chat-bubble ${
-                senderId === value?.id ? "sent-by-me" : ""
+                userId === value?.id ? "sent-by-me" : ""
               }`}
             >
               {message}

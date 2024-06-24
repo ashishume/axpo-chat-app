@@ -4,7 +4,7 @@ const { Message } = require("../db/db");
 
 exports.io = (server) => {
   return socketIO(server, {
-    transports: ["polling"],
+    transports: ["websocket", "polling"],
     cors: {
       origin: "*",
     },
@@ -13,18 +13,18 @@ exports.io = (server) => {
 exports.connection = (io) => {
   io.on("connection", (client) => {
     /** user logged in */
-    client.on("login", ({ roomId, senderId }) => {
+    client.on("login", ({ roomId, userId }) => {
       client.roomId = roomId;
-      client.senderId = senderId;
+      client.userId = userId;
       client.join(roomId);
       console.log(`connection established:${roomId}`);
     });
 
     /** message communication */
     client.on("message", async (messageData) => {
-      const { senderId, message } = messageData;
+      const { userId, message } = messageData;
 
-      if (senderId && message && client.roomId) {
+      if (userId && message && client.roomId) {
         io.to(client.roomId).emit("message", messageData);
         // io.to(roomId).emit("notification", {
         //   title: `New message`,
@@ -32,7 +32,7 @@ exports.connection = (io) => {
         //   targetId,
         // });
         await updateMessagesToDB(messageData, client.roomId);
-        // console.log(`message sent from ${senderId} to ${targetId}: ${message}`);
+        // console.log(`message sent from ${userId} to ${targetId}: ${message}`);
       }
     });
 
@@ -68,11 +68,11 @@ exports.connection = (io) => {
  */
 const updateMessagesToDB = async (messageData, roomId) => {
   try {
-    const { senderId, message } = messageData;
+    const { userId, message } = messageData;
     const messages = await Message.create({
       message,
       roomId,
-      userId: senderId,
+      userId,
     });
 
     console.log("message added", messages);

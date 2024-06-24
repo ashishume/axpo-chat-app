@@ -49,7 +49,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       }
     })();
     return () => {
-      // socketRef.current.disconnect();
+      socketRef.current?.disconnect();
     };
   }, [room]);
 
@@ -72,7 +72,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const fetchRoomDetails = async () => {
     try {
       const roomDetails = await fetchRoomData({
-        senderId: value?.id,
+        userId: value?.id,
         targetId: targetUser?.id,
         isGroup: false,
       });
@@ -85,7 +85,7 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   const sendMessage = () => {
     if (message?.length) {
       let messageObj = {
-        senderId: value?.id,
+        userId: value?.id,
         // targetId: targetUser?.id,
         message,
       };

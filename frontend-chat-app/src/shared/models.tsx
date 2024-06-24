@@ -11,13 +11,13 @@ export interface IMessage {
   id: string;
   message: string;
   targetId: number;
-  senderId: number;
+  userId: number;
   conversationId: string;
 }
 
 
 export interface IRoomPayload {
-  senderId: string;
+  userId: string;
   targetId: string;
   name?: string;
   isGroup: boolean;
