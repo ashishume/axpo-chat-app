@@ -1,5 +1,5 @@
 const express = require("express");
-const { User, Message } = require("../db/db");
+const { Message } = require("../db/db");
 const router = express.Router();
 /**
  * APTH PATH: /api/v1/chats/:roomId

@@ -1,5 +1,4 @@
 const socketIO = require("socket.io");
-// const pool = require("../utils/db-connect");
 const { Message } = require("../db/db");
 
 exports.io = (server) => {
@@ -43,18 +42,6 @@ exports.connection = (io) => {
         console.log(`connection disconnected:${client.roomId}`);
       }
     });
-
-    //TODO: use room based approach for chatting
-    // client.on("login", ({ userId }) => {
-    //   // Join a room based on the user's ID
-    //   client.join(userId);
-
-    //   // Handle onlineStatus event for the specific user
-    //   client.on("onlineStatus", ({ isOnline }) => {
-    //     // Emit the online status to all clients in the same room (user's ID)
-    //     io.to(userId).emit("onlineStatus", { userId, isOnline });
-    //   });
-    // });
   });
 };
 

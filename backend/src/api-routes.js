@@ -1,4 +1,3 @@
-// const userRoutes = require("./routes/user");
 const chatRoutes = require("./routes/chats-sq");
 const newUsersRoutes = require("./routes/users-sq");
 const roomRoutes = require("./routes/rooms");

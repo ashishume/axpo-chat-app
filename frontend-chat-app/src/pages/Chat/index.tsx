@@ -44,7 +44,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
 
         const previousChats = await fetchPreviousChats(room?.id);
         await setChatMessages(previousChats);
-        // showNotifications();
         inputRef.current.focus();
       }
     })();
@@ -94,30 +93,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     }
   };
 
-  //TODO find a way to show notifications when tab is out of focus
-  // const showNotifications = () => {
-  //   /** request permission for notifications */
-  //   Notification.requestPermission()
-  //     .then((result) => {
-  //       console.log("notication permission", result);
-  //     })
-  //     .catch(() => {
-  //       setErrorMessages("permission denied");
-  //     });
-
-  //   /** fetch notifications */
-  //   socketRef.current.on(
-  //     "notification",
-  //     (payload: { title: string; body: string; targetId: number }) => {
-  //
-  //       // Create a new notification
-  //         const notification = new Notification(payload.title, {
-  //           body: payload.body,
-  //         });
-  //         console.log(notification, "notification received");
-  //     }
-  //   );
-  // };
 
   return (
     <div className="chat-container">
