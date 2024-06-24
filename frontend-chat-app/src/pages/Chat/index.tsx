@@ -3,15 +3,19 @@ import useLocalStorage from "../../shared/Hooks/useLocalStorage";
 import "./style.scss";
 import { IMessage, IRoomResponse, IUser } from "../../shared/models";
 import SnackbarMessage from "../../components/Snackbar";
-import { fetchPreviousChats, fetchRoomData } from "../../shared/Utils";
+import { fetchPreviousChats } from "../../shared/Utils";
 import ChatMessages from "../../components/ChatMessages";
 import ChatInput from "../../components/ChatInput";
 import { socketConnection } from "../../shared/SocketConnection";
-const Chat = ({ targetUser }: { targetUser: IUser }) => {
-  //user id
+const Chat = ({
+  targetUser,
+  room,
+}: {
+  targetUser: IUser;
+  room: IRoomResponse | null;
+}) => {
   const { value } = useLocalStorage("auth");
   const [message, setMessage] = useState("");
-  const [room, setRoom] = useState(null as IRoomResponse | null);
   const [chatMessages, setChatMessages] = useState<null | IMessage[]>(null);
   const [error, setErrorMessages] = useState("");
   const socketRef = useRef(null as any);
@@ -25,10 +29,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
       lastMessage.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
-
-  useEffect(() => {
-    fetchRoomDetails();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -64,22 +64,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     }
   };
 
-  /**
-   * fetching past chat conversations
-   * @param conversationId
-   */
-  const fetchRoomDetails = async () => {
-    try {
-      const roomDetails = await fetchRoomData({
-        userId: value?.id,
-        targetId: targetUser?.id,
-        isGroup: false,
-      });
-      await setRoom(roomDetails);
-    } catch (e) {
-      setErrorMessages("fetching failed");
-    }
-  };
   /** send message to the target user */
   const sendMessage = () => {
     if (message?.length) {
@@ -87,12 +71,11 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
         userId: value?.id,
         message,
       };
-      
+
       socketRef.current.emit("message", messageObj);
       setMessage("");
     }
   };
-
 
   return (
     <div className="chat-container">

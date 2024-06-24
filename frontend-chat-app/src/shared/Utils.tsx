@@ -1,5 +1,6 @@
 import axios from "axios";
 import { IRoomPayload } from "./models";
+import { io } from "socket.io-client";
 
 export const fetchUsersWithLastMessage = async (userId: number) => {
   const usersUrl = `${
@@ -31,3 +32,7 @@ export const fetchRoomData = async (payload: IRoomPayload) => {
     return res.data?.room;
   }
 };
+
+export const socketConnectionUrl = io(import.meta.env.VITE_BASE_URL, {
+  transports: ["websocket", "polling"],
+});

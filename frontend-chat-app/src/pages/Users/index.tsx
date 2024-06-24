@@ -9,8 +9,8 @@ const Users = ({
   openChat,
 }: {
   users: IUser[];
-  activeUser: number;
-  openChat: (targetId: number) => void;
+  activeUser: string;
+  openChat: (targetId: string) => void;
 }) => {
   const { value } = useLocalStorage("auth");
 

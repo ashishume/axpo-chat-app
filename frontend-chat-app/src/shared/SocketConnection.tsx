@@ -1,4 +1,4 @@
-import io from "socket.io-client";
+import { socketConnectionUrl } from "./Utils";
 
 export const socketConnection = (
   roomId: string,
@@ -9,9 +9,7 @@ export const socketConnection = (
   setMessage: Function
 ) => {
   // Establish a socket connection
-  socketRef.current = io(import.meta.env.VITE_BASE_URL, {
-    transports: ["websocket", "polling"],
-  });
+  socketRef.current = socketConnectionUrl
   try {
     // Event listeners
     socketRef.current.on("connect", () => {

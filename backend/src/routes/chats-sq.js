@@ -13,7 +13,7 @@ module.exports = (io) => {
           roomId,
         },
       });
-      return res.status(200).json(chats);
+      return res.status(200).json(chats || []);
     } catch (err) {
       return res.status(500).send({
         message: "chat fetching failed",
