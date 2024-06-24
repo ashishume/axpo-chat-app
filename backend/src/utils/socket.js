@@ -32,19 +32,16 @@ exports.connection = (io) => {
         //   targetId,
         // });
         await updateMessagesToDB(messageData, client.roomId);
-        // console.log(`message sent from ${userId} to ${targetId}: ${message}`);
       }
     });
 
     /** connection disconnected */
     client.on("disconnect", () => {
-      console.log(client.roomId);
       if (client.roomId) {
         // Leave the room corresponding to the roomId
         client.leave(client.roomId);
         console.log(`connection disconnected:${client.roomId}`);
       }
-      console.log(`connection disconnected:${client.roomId}`);
     });
 
     //TODO: use room based approach for chatting
@@ -74,8 +71,6 @@ const updateMessagesToDB = async (messageData, roomId) => {
       roomId,
       userId,
     });
-
-    console.log("message added", messages);
   } catch (err) {
     console.log({ message: "message sending failed", err });
     throw err;

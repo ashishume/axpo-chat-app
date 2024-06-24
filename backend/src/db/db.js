@@ -104,8 +104,14 @@ Room.hasMany(Message, { foreignKey: "roomId" });
 Room.belongsToMany(User, { through: RoomMember, foreignKey: "roomId" });
 User.belongsToMany(Room, { through: RoomMember, foreignKey: "userId" });
 
-sequelize.sync().then(() => {
-  console.log("Database & tables created!");
-});
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Database & tables created!");
+  })
+  .catch((err) => {
+    console.log("database connection failed", err);
+    throw err;
+  });
 
 module.exports = { sequelize, User, Room, RoomMember, Message };

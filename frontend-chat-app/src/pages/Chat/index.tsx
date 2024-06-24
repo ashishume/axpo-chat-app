@@ -86,7 +86,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
     if (message?.length) {
       let messageObj = {
         userId: value?.id,
-        // targetId: targetUser?.id,
         message,
       };
       
@@ -119,8 +118,6 @@ const Chat = ({ targetUser }: { targetUser: IUser }) => {
   //     }
   //   );
   // };
-
-  console.log();
 
   return (
     <div className="chat-container">
