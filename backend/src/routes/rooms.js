@@ -7,9 +7,7 @@ module.exports = (io) => {
     try {
       const { userId, targetId, name, isGroup } = req.body;
       if (!isGroup) {
-        const sortedIds = [userId, targetId].sort((a, b) =>
-          a.localeCompare(b)
-        );
+        const sortedIds = [userId, targetId].sort((a, b) => a.localeCompare(b));
         const roomName = `DM_${sortedIds[0]}_${sortedIds[1]}`;
 
         let roomExists = await Room.findOne({
@@ -26,7 +24,9 @@ module.exports = (io) => {
             room,
           });
         } else {
-          return res.status(200).json({ room: roomExists });
+          return res
+            .status(200)
+            .json({ message: "room exists", room: roomExists });
         }
       } else {
         const { userIds } = req.body;

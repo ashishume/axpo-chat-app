@@ -75,7 +75,6 @@ const Home = () => {
           const res = await fetchTargetUser(targetId);
           setTargetUser(res);
           setActiveUser(targetId);
-          // fetchRoomDetails();
         } catch (e) {
           setErrorMessages("fetching failed");
         }

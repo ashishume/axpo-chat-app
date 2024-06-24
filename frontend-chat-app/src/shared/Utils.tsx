@@ -27,7 +27,7 @@ export const fetchPreviousChats = async (roomId: string) => {
 export const fetchRoomData = async (payload: IRoomPayload) => {
   const url = `${import.meta.env.VITE_BASE_API_URL}/room`;
   const res = await axios.post(url, payload);
-  if (res.status === 200) {
+  if (res.status === 200 || res.status === 201) {
     return res.data?.room;
   }
 };

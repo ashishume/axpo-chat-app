@@ -14,19 +14,19 @@ const LoginPage = () => {
   });
   const authFormData: IUser[] = [
     {
-      id: 1,
+      id: "1",
       name: "name",
       label: "Enter name",
       value: formData.name,
     },
     {
-      id: 2,
+      id: "2",
       name: "email",
       label: "Enter email",
       value: formData.email,
     },
     {
-      id: 3,
+      id: "3",
       name: "password",
       label: "Enter password",
       value: formData.password,
